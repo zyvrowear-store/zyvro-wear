@@ -3,10 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ZYVRO.WEAR — Online Store</title>
+  <title>ZYVRO.WEAR — Official Store</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body class="bg-neutral-50 text-neutral-900 min-h-screen font-sans antialiased">
+<body class="bg-[#FAFAFA] text-neutral-900 min-h-screen antialiased selection:bg-black selection:text-white">
 
   <script>
     const CONFIG = {
@@ -14,115 +21,218 @@
       SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyX7AEAfPXxwgCcjcEmhU23gGm3hKRcaNtRCwfrxlz4LnsIbXMErHPCIgWhNyriYb0I/exec",
       CARD_NUMBER: "9860 1606 0235 1506",
       CARD_HOLDER: "Abdurasulov Abduxalim",
-      CLICK_LINK: "https://my.click.uz/clickp2p/633C59EABE795B25B3AD53CAC08EB9CE58EDB8FAD6ED0569DAA4C815BFE5EEE2"
+      CLICK_LINK: "https://my.click.uz/clickp2p/633C59EABE795B25B3AD53CAC08EB9CE58EDB8FAD6ED0569DAA4C815BFE5EEE2",
+      BTS_URL: "https://www.uzbmarket.uz/bts-punktlari"
     };
   </script>
 
-  <!-- Navbar -->
-  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-neutral-200">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-2.5">
-        <span class="w-2.5 h-2.5 rounded-full bg-black"></span>
-        <span id="brandTitle" class="font-black text-xl tracking-widest uppercase">ZYVRO.WEAR</span>
-      </div>
+  <!-- Top Announcement Bar -->
+  <div class="bg-black text-white text-[11px] font-medium tracking-wider uppercase text-center py-2 px-4">
+    O‘zbekiston bo‘ylab BTS pochta orqali yetkazib berish • 100% oldindan to‘lov
+  </div>
 
-      <button onclick="toggleCart(true)" class="inline-flex items-center gap-2.5 bg-black text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-neutral-800 transition cursor-pointer">
+  <!-- Navbar -->
+  <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-neutral-200/80">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2.5 group">
+        <span class="w-2.5 h-2.5 rounded-full bg-black group-hover:scale-125 transition"></span>
+        <span class="font-extrabold text-xl tracking-[0.18em] uppercase">ZYVRO.WEAR</span>
+      </a>
+
+      <button onclick="toggleCart(true)" class="relative inline-flex items-center gap-2.5 bg-neutral-950 text-white px-4 py-2.5 rounded-full text-xs font-bold tracking-wide hover:bg-neutral-800 active:scale-95 transition cursor-pointer shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        </svg>
         <span>Savatcha</span>
-        <span id="cartBadge" class="bg-white text-black text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+        <span id="cartBadge" class="bg-white text-black text-[11px] font-extrabold px-2 py-0.5 rounded-full">0</span>
       </button>
     </div>
   </header>
 
-  <!-- Hero banner -->
-  <section class="bg-neutral-900 text-white py-10 px-4">
-    <div class="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-      <div>
-        <p class="text-xs uppercase tracking-widest text-neutral-400 mb-1">Yangi kolleksiya</p>
-        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Kiyim, Krasovka va Aksessuarlar</h1>
+  <!-- Hero Section -->
+  <section class="bg-neutral-950 text-white relative overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div class="space-y-3 max-w-xl">
+        <span class="inline-block text-[11px] font-bold uppercase tracking-[0.25em] text-neutral-400">Streetwear & Essentials</span>
+        <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-[1.1]">
+          Minimal uslub. <br class="hidden sm:block" /> Maksimal sifat.
+        </h1>
+        <p class="text-sm text-neutral-400 leading-relaxed">
+          Kiyim, krasovka va aksessuarlar kolleksiyasi. Mahsulotni tanlang, razmerni belgilang va BTS punktingizga buyurtma bering.
+        </p>
       </div>
-      <div class="text-xs text-neutral-300 bg-white/10 px-4 py-2.5 rounded-xl border border-white/10">
-        100% oldindan to‘lov • Tezkor yetkazib berish
+      <div class="flex flex-wrap gap-2 text-xs text-neutral-300">
+        <span class="bg-white/10 border border-white/10 px-3.5 py-2 rounded-full">BTS Pochta</span>
+        <span class="bg-white/10 border border-white/10 px-3.5 py-2 rounded-full">Click To‘lov</span>
+        <span class="bg-white/10 border border-white/10 px-3.5 py-2 rounded-full">Tezkor jo‘natma</span>
       </div>
     </div>
   </section>
 
-  <!-- Main Catalog -->
-  <main class="max-w-6xl mx-auto px-4 py-8">
-    <!-- Qidiruv va Kategoriyalar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <div id="categories" class="flex flex-wrap gap-2"></div>
-      <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Mahsulot qidirish..." class="w-full sm:w-64 bg-white border border-neutral-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-black" />
+  <!-- Catalog Section -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
+    <!-- Filter & Search -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div id="categories" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+      <div class="relative w-full sm:w-72">
+        <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Mahsulot nomi bo‘yicha qidirish..." class="w-full bg-white border border-neutral-200 rounded-full pl-10 pr-4 py-2.5 text-xs font-medium focus:outline-none focus:border-black transition" />
+        <svg class="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
+        </svg>
+      </div>
     </div>
 
-    <div id="loading" class="text-center py-20 text-neutral-500 text-sm">Mahsulotlar yuklanmoqda...</div>
-    <div id="productsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    <!-- Loading Skeleton -->
+    <div id="loading" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+      <div class="bg-white rounded-2xl p-3 border border-neutral-200/70 animate-pulse space-y-3">
+        <div class="aspect-[4/5] bg-neutral-200 rounded-xl"></div>
+        <div class="h-3 bg-neutral-200 rounded w-1/3"></div>
+        <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+      </div>
+      <div class="bg-white rounded-2xl p-3 border border-neutral-200/70 animate-pulse space-y-3">
+        <div class="aspect-[4/5] bg-neutral-200 rounded-xl"></div>
+        <div class="h-3 bg-neutral-200 rounded w-1/3"></div>
+        <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+      </div>
+      <div class="hidden md:block bg-white rounded-2xl p-3 border border-neutral-200/70 animate-pulse space-y-3">
+        <div class="aspect-[4/5] bg-neutral-200 rounded-xl"></div>
+        <div class="h-3 bg-neutral-200 rounded w-1/3"></div>
+        <div class="h-4 bg-neutral-200 rounded w-3/4"></div>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div id="productsGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"></div>
   </main>
 
-  <!-- Savatcha & Zakaz Modal -->
-  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
-      <div class="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
-        <h2 class="font-bold text-lg">Savatcha va 100% To‘lov</h2>
-        <button onclick="toggleCart(false)" class="text-neutral-400 hover:text-black text-2xl leading-none">&times;</button>
+  <!-- Footer -->
+  <footer class="border-t border-neutral-200 bg-white mt-16 py-8 px-4 text-center text-xs text-neutral-500 space-y-1">
+    <div class="font-extrabold text-neutral-900 tracking-widest uppercase">ZYVRO.WEAR</div>
+    <div>Viloyatlarga BTS pochta orqali yetkazib berish xizmati</div>
+  </footer>
+
+  <!-- PRODUCT DETAIL MODAL -->
+  <div id="productModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-6" onclick="if(event.target===this) closeProductModal()">
+    <div class="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col md:flex-row relative">
+      <button onclick="closeProductModal()" class="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-white/90 border border-neutral-200 flex items-center justify-center text-neutral-700 hover:bg-black hover:text-white transition cursor-pointer text-lg font-bold">&times;</button>
+
+      <!-- Left: Image Gallery -->
+      <div class="md:w-1/2 bg-neutral-100 p-4 flex flex-col justify-between">
+        <div class="aspect-square rounded-2xl overflow-hidden bg-white border border-neutral-200/60">
+          <img id="modalMainImg" src="" alt="" class="w-full h-full object-cover transition duration-300" />
+        </div>
+        <div id="modalThumbs" class="flex gap-2 mt-3 overflow-x-auto no-scrollbar"></div>
       </div>
 
-      <div class="p-6 overflow-y-auto space-y-6">
-        <div id="cartItems" class="space-y-3"></div>
+      <!-- Right: Product Info & Size Picker -->
+      <div class="md:w-1/2 p-5 sm:p-7 overflow-y-auto flex flex-col justify-between space-y-5">
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="modalCategory" class="text-[11px] font-bold uppercase tracking-widest text-neutral-400"></span>
+              <span class="text-neutral-300">•</span>
+              <span id="modalDelivery" class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full"></span>
+            </div>
+            <h2 id="modalTitle" class="text-xl sm:text-2xl font-extrabold mt-1.5 leading-snug"></h2>
+            <div id="modalPrice" class="text-xl font-extrabold text-neutral-900 mt-2"></div>
+          </div>
 
-        <div class="flex items-center justify-between pt-3 border-t border-neutral-200 font-bold text-base">
+          <!-- Size Selector -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-neutral-500">Razmerni tanlang:</span>
+              <span id="selectedSizeLabel" class="text-xs font-extrabold text-black"></span>
+            </div>
+            <div id="modalSizes" class="flex flex-wrap gap-2"></div>
+          </div>
+
+          <!-- Description -->
+          <div class="pt-3 border-t border-neutral-100">
+            <div class="text-xs font-bold uppercase tracking-wider text-neutral-500 mb-1.5">Mahsulot tavsifi</div>
+            <p id="modalDesc" class="text-xs sm:text-sm text-neutral-600 leading-relaxed whitespace-pre-line"></p>
+          </div>
+        </div>
+
+        <button id="modalAddBtn" class="w-full bg-black text-white font-bold text-sm py-3.5 rounded-2xl hover:bg-neutral-800 active:scale-[0.99] transition cursor-pointer shadow-md">
+          + Savatchaga qo‘shish
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CART & CHECKOUT MODAL -->
+  <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4" onclick="if(event.target===this) toggleCart(false)">
+    <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden max-h-[92vh] flex flex-col">
+      <div class="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+        <div>
+          <h2 class="font-extrabold text-lg">Savatcha va To‘lov</h2>
+          <p class="text-[11px] text-neutral-500">100% oldindan to‘lov • BTS pochta</p>
+        </div>
+        <button onclick="toggleCart(false)" class="w-8 h-8 rounded-full bg-neutral-100 hover:bg-black hover:text-white flex items-center justify-center text-lg transition cursor-pointer">&times;</button>
+      </div>
+
+      <div class="p-5 sm:p-6 overflow-y-auto space-y-5">
+        <div id="cartItems" class="space-y-2.5"></div>
+
+        <div class="flex items-center justify-between pt-3 border-t border-neutral-200 font-extrabold text-base">
           <span>Jami to‘lov (100%):</span>
-          <span id="cartTotal" class="text-black text-lg">0 so‘m</span>
+          <span id="cartTotal" class="text-lg">0 so‘m</span>
         </div>
 
         <form id="orderForm" class="space-y-4">
           <div>
-            <label class="block text-xs font-bold uppercase text-neutral-500 mb-1">Ism va familiya *</label>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Ism va familiyangiz *</label>
             <input type="text" id="custName" required placeholder="Masalan: Jasur Alimov" class="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-bold uppercase text-neutral-500 mb-1">Telefon raqam *</label>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Telefon raqam *</label>
               <input type="tel" id="custPhone" required placeholder="+998 90 123 45 67" class="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
             </div>
             <div>
-              <label class="block text-xs font-bold uppercase text-neutral-500 mb-1">Telegram @username *</label>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">Telegram @username *</label>
               <input type="text" id="custTg" required placeholder="@username" class="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
             </div>
           </div>
 
-          <div>
-            <label class="block text-xs font-bold uppercase text-neutral-500 mb-1">Mahsulotni qayerdan olasiz / Manzil *</label>
-            <select id="pickupType" class="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm mb-2 bg-white focus:outline-none focus:border-black">
-              <option value="Toshkent — Kuryer orqali">Toshkent — Kuryer orqali</option>
-              <option value="Viloyatlarga — BTS / Fargo pochta">Viloyatlarga — BTS / Fargo pochta</option>
-              <option value="O‘zim kelib olib ketaman (Pickup)">O‘zim kelib olib ketaman (Pickup)</option>
-            </select>
-            <input type="text" id="custAddress" required placeholder="Shahar, tuman, mo‘ljal yoki olib ketish joyi" class="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
+          <!-- BTS Delivery Box -->
+          <div class="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-4 space-y-2.5">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold text-blue-950">Yetkazib berish: Viloyatlarga BTS orqali</span>
+            </div>
+            <p class="text-xs text-blue-900 leading-relaxed">
+              O‘zingizga eng yaqin BTS pochta bo‘limi manzilini quyidagi havoladan ko‘rib, pastga aniq yozing:
+              <a href="https://www.uzbmarket.uz/bts-punktlari" target="_blank" class="inline-flex items-center gap-1 font-bold underline text-blue-700 hover:text-blue-900 mt-1">
+                BTS punktlari manzillarini ko‘rish ↗
+              </a>
+            </p>
+            <input type="text" id="custAddress" required placeholder="Viloyat, shahar/tuman va BTS punkti manzilini kiriting" class="w-full bg-white border border-blue-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
           </div>
 
-          <!-- To'lov kartasi -->
-          <div class="bg-neutral-100 border border-neutral-200 rounded-xl p-4 space-y-2.5">
-            <div class="text-xs font-bold text-neutral-800">100% oldindan to‘lov uchun karta:</div>
-            <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-lg border border-neutral-300">
+          <!-- Payment Card Box -->
+          <div class="bg-neutral-100 border border-neutral-200 rounded-2xl p-4 space-y-3">
+            <div class="text-xs font-extrabold text-neutral-800">100% oldindan to‘lov uchun karta:</div>
+            <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border border-neutral-300">
               <div>
-                <div id="cardDisplay" class="font-mono font-bold text-sm">9860 1606 0235 1506</div>
-                <div id="holderDisplay" class="text-[11px] text-neutral-500 uppercase">Abdurasulov Abduxalim</div>
+                <div class="font-mono font-bold text-sm tracking-wide">9860 1606 0235 1506</div>
+                <div class="text-[11px] text-neutral-500 uppercase font-medium">Abdurasulov Abduxalim</div>
               </div>
-              <button type="button" onclick="copyCard()" class="text-xs bg-black text-white px-3 py-1.5 rounded-lg hover:bg-neutral-800 font-medium cursor-pointer">Nusxalash</button>
+              <button type="button" onclick="copyCard()" class="text-xs bg-black text-white px-3 py-1.5 rounded-lg hover:bg-neutral-800 font-semibold cursor-pointer">Nusxalash</button>
             </div>
-            <div class="pt-1">
-              <a id="clickBtn" target="_blank" class="block w-full text-center bg-blue-600 text-white text-xs font-bold py-2.5 rounded-lg hover:bg-blue-700 transition">Click orqali to‘lash</a>
-            </div>
+            <a id="clickBtn" target="_blank" class="block w-full text-center bg-blue-600 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-blue-700 transition">
+              Click orqali to‘lash
+            </a>
           </div>
 
-          <!-- To'lov cheki -->
+          <!-- Payer Full Name instead of Screenshot -->
           <div>
-            <label class="block text-xs font-bold uppercase text-neutral-500 mb-1">To‘lov cheki (skrinshot) *</label>
-            <input type="file" id="checkFile" accept="image/*" required class="w-full text-xs text-neutral-600 file:mr-3 file:py-2 file:px-3.5 file:rounded-lg file:border-0 file:bg-black file:text-white hover:file:bg-neutral-800 cursor-pointer" />
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-1">To‘lovni amalga oshirgan shaxsning ismi *</label>
+            <input type="text" id="payerName" required placeholder="Pul tashlagan karta egasining ism-familiyasi" class="w-full border border-neutral-300 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
+            <p class="text-[11px] text-neutral-500 mt-1">To‘lov tushganini tezroq tasdiqlashimiz uchun pul o‘tkazgan odam ismini aniq kiriting.</p>
           </div>
 
-          <button type="submit" id="submitBtn" class="w-full bg-black text-white font-bold py-3.5 rounded-xl hover:bg-neutral-800 transition cursor-pointer">
+          <button type="submit" id="submitBtn" class="w-full bg-black text-white font-bold py-3.5 rounded-2xl hover:bg-neutral-800 transition cursor-pointer shadow-md">
             Zakazni tasdiqlash
           </button>
         </form>
@@ -131,14 +241,25 @@
   </div>
 
   <script>
-    document.getElementById("brandTitle").textContent = CONFIG.SHOP_NAME;
-    document.getElementById("cardDisplay").textContent = CONFIG.CARD_NUMBER;
-    document.getElementById("holderDisplay").textContent = CONFIG.CARD_HOLDER;
     document.getElementById("clickBtn").href = CONFIG.CLICK_LINK;
 
     let products = [];
     let activeCategory = "Barchasi";
-    let cart = JSON.parse(localStorage.getItem("zyvro_cart") || "[]");
+    let cart = JSON.parse(localStorage.getItem("zyvro_cart_v2") || "[]");
+    let currentModalProduct = null;
+    let selectedModalSize = "";
+
+    function parseImages(raw) {
+      if (!raw) return ["https://placehold.co/800x800/f5f5f5/171717?text=ZYVRO.WEAR"];
+      const list = String(raw).split(",").map(s => s.trim()).filter(Boolean);
+      return list.length ? list : ["https://placehold.co/800x800/f5f5f5/171717?text=ZYVRO.WEAR"];
+    }
+
+    function parseSizes(raw) {
+      if (!raw) return ["Standard"];
+      const list = String(raw).split(",").map(s => s.trim()).filter(Boolean);
+      return list.length ? list : ["Standard"];
+    }
 
     async function loadProducts() {
       try {
@@ -150,16 +271,17 @@
         renderProducts();
         updateCartUI();
       } catch (e) {
-        document.getElementById("loading").textContent = "Mahsulotlar yuklanmadi. Google Sheets'ga kamida 1 ta mahsulot qo‘shilganini tekshiring.";
+        document.getElementById("loading").innerHTML = `<p class="col-span-full text-center text-neutral-500 py-12 text-sm">Mahsulotlar yuklanmadi. Internet yoki Google Sheets bazasini tekshiring.</p>`;
       }
     }
 
     function renderCategories() {
       const cats = ["Barchasi", ...new Set(products.map(p => p.kategoriya).filter(Boolean))];
-      const box = document.getElementById("categories");
-      box.innerHTML = cats.map(cat => `
-        <button onclick="setCategory('${cat}')" class="px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide transition cursor-pointer ${
-          activeCategory === cat ? "bg-black text-white" : "bg-white text-neutral-700 border border-neutral-300 hover:border-black"
+      document.getElementById("categories").innerHTML = cats.map(cat => `
+        <button onclick="setCategory('${cat}')" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider whitespace-nowrap transition cursor-pointer ${
+          activeCategory === cat
+            ? "bg-black text-white shadow-xs"
+            : "bg-white text-neutral-600 border border-neutral-200 hover:border-black hover:text-black"
         }">${cat}</button>
       `).join("");
     }
@@ -174,63 +296,130 @@
       const q = document.getElementById("searchInput").value.toLowerCase().trim();
       let list = activeCategory === "Barchasi" ? products : products.filter(p => p.kategoriya === activeCategory);
       if (q) {
-        list = list.filter(p => String(p.nomi).toLowerCase().includes(q) || String(p.tavsif).toLowerCase().includes(q));
+        list = list.filter(p =>
+          String(p.nomi).toLowerCase().includes(q) ||
+          String(p.tavsif).toLowerCase().includes(q)
+        );
       }
 
       const grid = document.getElementById("productsGrid");
       if (!list.length) {
-        grid.innerHTML = `<p class="col-span-full text-center text-neutral-500 py-14 text-sm">Hozircha mahsulot topilmadi.</p>`;
+        grid.innerHTML = `<p class="col-span-full text-center text-neutral-500 py-16 text-sm">Hozircha bu bo‘limda mahsulot topilmadi.</p>`;
         return;
       }
 
-      grid.innerHTML = list.map(p => `
-        <div class="bg-white rounded-2xl border border-neutral-200 overflow-hidden flex flex-col justify-between hover:shadow-md transition">
-          <div>
-            <div class="aspect-square bg-neutral-100 overflow-hidden">
-              <img src="${p.rasm || 'https://placehold.co/600x600?text=ZYVRO.WEAR'}" alt="${p.nomi}" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
-            </div>
-            <div class="p-4">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">${p.kategoriya || "Wear"}</span>
-              <h3 class="font-bold text-base mt-0.5">${p.nomi}</h3>
-              <p class="text-xs text-neutral-500 mt-1 line-clamp-2">${p.tavsif || ""}</p>
-            </div>
-          </div>
+      grid.innerHTML = list.map(p => {
+        const imgs = parseImages(p.rasmlar || p.rasm);
+        const sizes = parseSizes(p.razmerlar);
+        const delivery = p.yetkazish_vaqti || "2–4 kun";
 
-          <div class="px-4 pb-4 pt-2 space-y-2.5">
-            <div class="flex items-center gap-2">
-              <select id="size-${p.id}" class="border border-neutral-300 rounded-xl px-2.5 py-2 text-xs font-semibold bg-neutral-50 focus:outline-none focus:border-black">
-                <option value="S">S</option>
-                <option value="M" selected>M</option>
-                <option value="L">L</option>
-                <option value="XL">XL</option>
-                <option value="40">40</option>
-                <option value="41">41</option>
-                <option value="42">42</option>
-                <option value="43">43</option>
-                <option value="44">44</option>
-                <option value="Standard">Standard</option>
-              </select>
-              <button onclick="addToCart('${p.id}')" class="flex-1 bg-black text-white text-xs font-bold py-2.5 rounded-xl hover:bg-neutral-800 transition cursor-pointer">
-                + Savatga qo‘shish
-              </button>
+        return `
+          <div onclick="openProductModal('${p.id}')" class="group bg-white rounded-2xl border border-neutral-200/80 overflow-hidden flex flex-col justify-between hover:shadow-xl hover:-translate-y-0.5 transition duration-300 cursor-pointer">
+            <div>
+              <div class="relative aspect-[4/5] bg-neutral-100 overflow-hidden">
+                <img src="${imgs[0]}" alt="${p.nomi}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+                ${imgs.length > 1 ? `<span class="absolute bottom-2.5 right-2.5 bg-black/70 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-xs">+${imgs.length - 1} rasm</span>` : ""}
+                <span class="absolute top-2.5 left-2.5 bg-white/90 text-neutral-800 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur-xs">${delivery}</span>
+              </div>
+              <div class="p-3.5 sm:p-4">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-neutral-400">${p.kategoriya || "Wear"}</div>
+                <h3 class="font-bold text-sm sm:text-base mt-0.5 line-clamp-1 group-hover:underline">${p.nomi}</h3>
+                <div class="flex flex-wrap gap-1 mt-2">
+                  ${sizes.slice(0, 4).map(s => `<span class="text-[10px] font-semibold bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded-md">${s}</span>`).join("")}
+                  ${sizes.length > 4 ? `<span class="text-[10px] font-semibold text-neutral-400 px-1 py-0.5">+${sizes.length - 4}</span>` : ""}
+                </div>
+              </div>
             </div>
-            <div class="font-extrabold text-base text-right">${Number(p.narxi).toLocaleString("ru-RU")} so‘m</div>
+
+            <div class="px-3.5 sm:px-4 pb-3.5 sm:pb-4 pt-1 flex items-center justify-between">
+              <span class="font-extrabold text-sm sm:text-base">${Number(p.narxi).toLocaleString("ru-RU")} so‘m</span>
+              <span class="text-[11px] font-bold text-neutral-500 group-hover:text-black transition">Batafsil →</span>
+            </div>
           </div>
-        </div>
+        `;
+      }).join("");
+    }
+
+    function openProductModal(id) {
+      const prod = products.find(p => String(p.id) === String(id));
+      if (!prod) return;
+      currentModalProduct = prod;
+
+      const imgs = parseImages(prod.rasmlar || prod.rasm);
+      const sizes = parseSizes(prod.razmerlar);
+      selectedModalSize = sizes[0];
+
+      document.getElementById("modalMainImg").src = imgs[0];
+      document.getElementById("modalCategory").textContent = prod.kategoriya || "ZYVRO.WEAR";
+      document.getElementById("modalDelivery").textContent = `Yetkazish: ${prod.yetkazish_vaqti || "2–4 kun"}`;
+      document.getElementById("modalTitle").textContent = prod.nomi;
+      document.getElementById("modalPrice").textContent = `${Number(prod.narxi).toLocaleString("ru-RU")} so‘m`;
+      document.getElementById("modalDesc").textContent = prod.tavsif || "Sifatli material va zamonaviy dizayn.";
+
+      // Thumbnails
+      const thumbsBox = document.getElementById("modalThumbs");
+      thumbsBox.innerHTML = imgs.map((url, i) => `
+        <button type="button" onclick="selectModalImage('${url}', this)" class="w-16 h-16 rounded-xl overflow-hidden border-2 shrink-0 transition cursor-pointer ${i === 0 ? "border-black" : "border-transparent opacity-70 hover:opacity-100"}">
+          <img src="${url}" class="w-full h-full object-cover" />
+        </button>
+      `).join("");
+
+      renderModalSizes(sizes);
+
+      document.getElementById("modalAddBtn").onclick = () => {
+        addToCart(prod, selectedModalSize);
+        closeProductModal();
+        toggleCart(true);
+      };
+
+      document.getElementById("productModal").classList.remove("hidden");
+    }
+
+    function selectModalImage(url, btn) {
+      document.getElementById("modalMainImg").src = url;
+      document.querySelectorAll("#modalThumbs button").forEach(b => {
+        b.classList.remove("border-black");
+        b.classList.add("border-transparent", "opacity-70");
+      });
+      btn.classList.add("border-black");
+      btn.classList.remove("border-transparent", "opacity-70");
+    }
+
+    function renderModalSizes(sizes) {
+      document.getElementById("selectedSizeLabel").textContent = selectedModalSize;
+      document.getElementById("modalSizes").innerHTML = sizes.map(s => `
+        <button type="button" onclick="chooseSize('${s}')" class="min-w-[44px] px-3.5 py-2 rounded-xl text-xs font-bold border transition cursor-pointer ${
+          selectedModalSize === s
+            ? "bg-black text-white border-black"
+            : "bg-white text-neutral-800 border-neutral-300 hover:border-black"
+        }">${s}</button>
       `).join("");
     }
 
-    function addToCart(id) {
-      const prod = products.find(p => String(p.id) === String(id));
-      if (!prod) return;
-      const sizeEl = document.getElementById(`size-${id}`);
-      const size = sizeEl ? sizeEl.value : "Standard";
-      const key = `${prod.id}_${size}`;
+    function chooseSize(size) {
+      selectedModalSize = size;
+      const sizes = parseSizes(currentModalProduct.razmerlar);
+      renderModalSizes(sizes);
+    }
 
+    function closeProductModal() {
+      document.getElementById("productModal").classList.add("hidden");
+    }
+
+    function addToCart(prod, size) {
+      const key = `${prod.id}_${size}`;
       const existing = cart.find(item => item.key === key);
       if (existing) existing.qty += 1;
-      else cart.push({ key, id: prod.id, nomi: prod.nomi, size, narxi: Number(prod.narxi), qty: 1 });
-
+      else {
+        cart.push({
+          key,
+          id: prod.id,
+          nomi: prod.nomi,
+          size,
+          narxi: Number(prod.narxi),
+          qty: 1
+        });
+      }
       saveCart();
       updateCartUI();
     }
@@ -243,7 +432,7 @@
     }
 
     function saveCart() {
-      localStorage.setItem("zyvro_cart", JSON.stringify(cart));
+      localStorage.setItem("zyvro_cart_v2", JSON.stringify(cart));
     }
 
     function updateCartUI() {
@@ -254,20 +443,20 @@
 
       const container = document.getElementById("cartItems");
       if (!cart.length) {
-        container.innerHTML = `<p class="text-sm text-neutral-500 text-center py-4">Savatchangiz bo‘sh.</p>`;
+        container.innerHTML = `<p class="text-sm text-neutral-500 text-center py-6">Savatchangiz hozircha bo‘sh.</p>`;
         return;
       }
 
       container.innerHTML = cart.map((item, idx) => `
-        <div class="flex items-center justify-between bg-neutral-50 p-3 rounded-xl border border-neutral-200">
+        <div class="flex items-center justify-between bg-neutral-50 p-3.5 rounded-2xl border border-neutral-200/80">
           <div>
-            <div class="font-bold text-sm">${item.nomi} <span class="text-xs font-semibold text-neutral-500">[${item.size}]</span></div>
-            <div class="text-xs text-neutral-600">${(item.narxi * item.qty).toLocaleString("ru-RU")} so‘m</div>
+            <div class="font-bold text-sm">${item.nomi} <span class="text-xs font-extrabold bg-neutral-200 px-2 py-0.5 rounded-md ml-1">${item.size}</span></div>
+            <div class="text-xs text-neutral-600 mt-0.5">${(item.narxi * item.qty).toLocaleString("ru-RU")} so‘m</div>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="changeQty(${idx}, -1)" class="w-7 h-7 rounded-lg bg-white border border-neutral-300 font-bold">-</button>
-            <span class="text-sm font-bold w-5 text-center">${item.qty}</span>
-            <button type="button" onclick="changeQty(${idx}, 1)" class="w-7 h-7 rounded-lg bg-white border border-neutral-300 font-bold">+</button>
+            <button type="button" onclick="changeQty(${idx}, -1)" class="w-7 h-7 rounded-lg bg-white border border-neutral-300 font-bold hover:border-black cursor-pointer">-</button>
+            <span class="text-sm font-extrabold w-5 text-center">${item.qty}</span>
+            <button type="button" onclick="changeQty(${idx}, 1)" class="w-7 h-7 rounded-lg bg-white border border-neutral-300 font-bold hover:border-black cursor-pointer">+</button>
           </div>
         </div>
       `).join("");
@@ -279,32 +468,18 @@
 
     function copyCard() {
       navigator.clipboard.writeText(CONFIG.CARD_NUMBER);
-      alert("Karta raqami nusxalandi!");
-    }
-
-    function readFileAsBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      alert("Karta raqami nusxalandi: " + CONFIG.CARD_NUMBER);
     }
 
     document.getElementById("orderForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!cart.length) return alert("Avval savatchaga mahsulot qo‘shing!");
 
-      const fileInput = document.getElementById("checkFile");
-      if (!fileInput.files.length) return alert("Iltimos, to‘lov cheki skrinshotini yuklang!");
-
       const btn = document.getElementById("submitBtn");
       btn.disabled = true;
       btn.textContent = "Zakaz yuborilmoqda...";
 
       try {
-        const file = fileInput.files[0];
-        const base64 = await readFileAsBase64(file);
         const total = cart.reduce((s, i) => s + i.qty * i.narxi, 0);
         const itemsText = cart.map(i => `• ${i.nomi} (${i.size}) x${i.qty} — ${(i.narxi * i.qty).toLocaleString("ru-RU")} so‘m`).join("\n");
 
@@ -312,11 +487,10 @@
           mijoz: document.getElementById("custName").value.trim(),
           telefon: document.getElementById("custPhone").value.trim(),
           telegram: document.getElementById("custTg").value.trim(),
-          manzil: `${document.getElementById("pickupType").value} — ${document.getElementById("custAddress").value.trim()}`,
+          manzil: `BTS: ${document.getElementById("custAddress").value.trim()}`,
           mahsulotlarText: itemsText,
           jami: total,
-          chekBase64: base64,
-          chekMime: file.type
+          tolovchiIsm: document.getElementById("payerName").value.trim()
         };
 
         const res = await fetch(CONFIG.SCRIPT_URL, {
@@ -326,7 +500,7 @@
         const result = await res.json();
 
         if (result.status === "ok") {
-          alert("Zakazingiz va to‘lov cheki qabul qilindi! Tez orada Telegram orqali bog‘lanamiz.");
+          alert("Zakazingiz qabul qilindi! To‘lov tekshirilgach Telegram orqali bog‘lanamiz.");
           cart = [];
           saveCart();
           updateCartUI();
