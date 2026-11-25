@@ -287,9 +287,12 @@
       const old = Number(p.eski_narx) > Number(p.narxi) ? Number(p.eski_narx) : 0;
       const off = old ? Math.round((1 - p.narxi / old) * 100) : 0;
       return `
-      <button data-id="${esc(p.id)}" class="card group text-left bg-white rounded-2xl border border-[#DDE1E7] overflow-hidden flex flex-col hover:border-black transition">
+      <div role="button" tabindex="0" data-id="${esc(p.id)}" class="card group text-left bg-white rounded-2xl border border-[#DDE1E7] overflow-hidden flex flex-col hover:border-black transition cursor-pointer">
         <div class="relative aspect-[4/5] bg-[#F2F3F5] overflow-hidden">
-          <img src="${esc(imgs[0])}" alt="${esc(p.nomi)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
+          <div class="slider flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
+            ${imgs.map((u, i) => `<img src="${esc(u)}" alt="${esc(p.nomi)}" ${i ? 'loading="lazy"' : ""} draggable="false" class="w-full h-full object-cover shrink-0 snap-center" style="min-width:100%" />`).join("")}
+          </div>
+          ${imgs.length > 1 ? `<div class="dots absolute bottom-2.5 left-0 right-0 flex justify-center gap-1 pointer-events-none">${imgs.map((_, i) => `<span class="dot h-1.5 rounded-full bg-white transition-all ${i ? "w-1.5 opacity-60" : "w-4"}"></span>`).join("")}</div>` : ""}
           <span class="absolute top-2.5 left-2.5 bg-white text-xs font-semibold px-2.5 py-1 rounded-full">${esc(p.yetkazish_vaqti || "2–4 kun")}</span>
           ${off ? `<span class="absolute top-2.5 right-2.5 bg-[#D9202E] text-white text-xs font-bold px-2 py-1 rounded-full">−${off}%</span>` : ""}
         </div>
@@ -298,9 +301,46 @@
           <div class="flex flex-wrap gap-1">${sizes.slice(0, 4).map(z => `<span class="text-[11px] font-semibold bg-[#F2F3F5] text-neutral-600 px-2 py-0.5 rounded-md">${esc(z)}</span>`).join("")}${sizes.length > 4 ? `<span class="text-[11px] text-neutral-400">+${sizes.length - 4}</span>` : ""}</div>
           <div class="mt-auto pt-1 flex items-baseline gap-2"><span class="font-extrabold">${money(p.narxi)}</span>${old ? `<s class="text-xs text-neutral-400">${money(old)}</s>` : ""}</div>
         </div>
-      </button>`;
+      </div>`;
     }).join("");
-    document.querySelectorAll(".card").forEach(c => c.onclick = () => openProductModal(c.dataset.id));
+    document.querySelectorAll(".card").forEach(c => {
+      c.onclick = () => openProductModal(c.dataset.id);
+      c.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProductModal(c.dataset.id); } };
+    });
+    initSliders();
+  }
+
+  /* ---- Kartochka rasmlari: surish + har 3 sekundda avtomatik almashish ---- */
+  const SLIDE_INTERVAL = 3000; // ms — shu yerda vaqtni o‘zgartirasiz (3000 = 3 sekund)
+  const AUTO_SLIDE = true;     // false qilsangiz faqat qo‘lda suriladi
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function initSliders() {
+    document.querySelectorAll(".slider").forEach(sl => {
+      const dots = sl.parentElement.querySelectorAll(".dot");
+      if (!dots.length) return;
+      sl.addEventListener("scroll", () => {
+        const i = Math.round(sl.scrollLeft / sl.clientWidth);
+        dots.forEach((d, k) => { d.classList.toggle("w-4", k === i); d.classList.toggle("w-1.5", k !== i); d.classList.toggle("opacity-60", k !== i); });
+      }, { passive: true });
+      const pause = () => { sl.dataset.pause = "1"; };
+      const resume = () => { setTimeout(() => { sl.dataset.pause = ""; }, 4000); };
+      sl.addEventListener("pointerenter", pause); sl.addEventListener("pointerleave", resume);
+      sl.addEventListener("touchstart", pause, { passive: true }); sl.addEventListener("touchend", resume);
+    });
+  }
+
+  if (AUTO_SLIDE && !reduceMotion) {
+    setInterval(() => {
+      document.querySelectorAll(".slider").forEach(sl => {
+        const count = sl.children.length;
+        if (count < 2 || sl.dataset.pause) return;
+        const r = sl.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > window.innerHeight) return; // ekranda ko‘rinmasa almashtirmaydi
+        const next = (Math.round(sl.scrollLeft / sl.clientWidth) + 1) % count;
+        sl.scrollTo({ left: next * sl.clientWidth, behavior: "smooth" });
+      });
+    }, SLIDE_INTERVAL);
   }
 
   function openProductModal(id) {
