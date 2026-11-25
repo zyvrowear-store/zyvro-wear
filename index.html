@@ -311,8 +311,7 @@
   }
 
   /* ---- Kartochka rasmlari: surish (swipe) + har 3 sekundda avtomatik almashish ---- */
-  const SLIDE_INTERVAL = 5000; // ms — 3000 = 3 sekund (shu yerda o‘zgartirasiz)
-  const USER_PAUSE = 5000;     // odam o‘zi surgandan keyin necha ms avtomatik almashmasin
+  const SLIDE_INTERVAL = 3000; // ms — 3000 = 3 sekund (shu yerda o‘zgartirasiz)
 
   function initSliders() {
     document.querySelectorAll(".slider").forEach(sl => {
@@ -322,9 +321,9 @@
         const i = Math.round(sl.scrollLeft / sl.clientWidth);
         dots.forEach((d, k) => { d.classList.toggle("w-4", k === i); d.classList.toggle("w-1.5", k !== i); d.classList.toggle("opacity-60", k !== i); });
       }, { passive: true });
-      // odam surayotgan paytda avtomatik almashish qisqa to‘xtaydi
-      ["touchstart", "touchmove", "touchend", "pointerdown", "wheel"].forEach(ev =>
-        sl.addEventListener(ev, () => { sl.dataset.last = Date.now(); }, { passive: true }));
+      // odam surgan zahoti shu kartochka avtomatik almashishdan butunlay to‘xtaydi
+      ["touchstart", "touchmove", "pointerdown", "wheel", "mousedown"].forEach(ev =>
+        sl.addEventListener(ev, () => { sl.dataset.stop = "1"; }, { passive: true }));
     });
   }
 
@@ -332,7 +331,7 @@
     document.querySelectorAll(".slider").forEach(sl => {
       const count = sl.children.length;
       if (count < 2) return;
-      if (Date.now() - Number(sl.dataset.last || 0) < USER_PAUSE) return;
+      if (sl.dataset.stop) return; // odam surgan — to‘xtaydi
       const r = sl.getBoundingClientRect();
       if (r.bottom < 0 || r.top > window.innerHeight) return; // ekranda ko‘rinmasa almashmaydi
       const next = (Math.round(sl.scrollLeft / sl.clientWidth) + 1) % count;
