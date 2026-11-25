@@ -310,10 +310,9 @@
     initSliders();
   }
 
-  /* ---- Kartochka rasmlari: surish + har 3 sekundda avtomatik almashish ---- */
-  const SLIDE_INTERVAL = 3000; // ms — shu yerda vaqtni o‘zgartirasiz (3000 = 3 sekund)
-  const AUTO_SLIDE = true;     // false qilsangiz faqat qo‘lda suriladi
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* ---- Kartochka rasmlari: surish (swipe) + har 3 sekundda avtomatik almashish ---- */
+  const SLIDE_INTERVAL = 3000; // ms — 3000 = 3 sekund (shu yerda o‘zgartirasiz)
+  const USER_PAUSE = 5000;     // odam o‘zi surgandan keyin necha ms avtomatik almashmasin
 
   function initSliders() {
     document.querySelectorAll(".slider").forEach(sl => {
@@ -323,25 +322,23 @@
         const i = Math.round(sl.scrollLeft / sl.clientWidth);
         dots.forEach((d, k) => { d.classList.toggle("w-4", k === i); d.classList.toggle("w-1.5", k !== i); d.classList.toggle("opacity-60", k !== i); });
       }, { passive: true });
-      const pause = () => { sl.dataset.pause = "1"; };
-      const resume = () => { setTimeout(() => { sl.dataset.pause = ""; }, 4000); };
-      sl.addEventListener("pointerenter", pause); sl.addEventListener("pointerleave", resume);
-      sl.addEventListener("touchstart", pause, { passive: true }); sl.addEventListener("touchend", resume);
+      // odam surayotgan paytda avtomatik almashish qisqa to‘xtaydi
+      ["touchstart", "touchmove", "touchend", "pointerdown", "wheel"].forEach(ev =>
+        sl.addEventListener(ev, () => { sl.dataset.last = Date.now(); }, { passive: true }));
     });
   }
 
-  if (AUTO_SLIDE && !reduceMotion) {
-    setInterval(() => {
-      document.querySelectorAll(".slider").forEach(sl => {
-        const count = sl.children.length;
-        if (count < 2 || sl.dataset.pause) return;
-        const r = sl.getBoundingClientRect();
-        if (r.bottom < 0 || r.top > window.innerHeight) return; // ekranda ko‘rinmasa almashtirmaydi
-        const next = (Math.round(sl.scrollLeft / sl.clientWidth) + 1) % count;
-        sl.scrollTo({ left: next * sl.clientWidth, behavior: "smooth" });
-      });
-    }, SLIDE_INTERVAL);
-  }
+  setInterval(() => {
+    document.querySelectorAll(".slider").forEach(sl => {
+      const count = sl.children.length;
+      if (count < 2) return;
+      if (Date.now() - Number(sl.dataset.last || 0) < USER_PAUSE) return;
+      const r = sl.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > window.innerHeight) return; // ekranda ko‘rinmasa almashmaydi
+      const next = (Math.round(sl.scrollLeft / sl.clientWidth) + 1) % count;
+      sl.scrollTo({ left: next * sl.clientWidth, behavior: "smooth" });
+    });
+  }, SLIDE_INTERVAL);
 
   function openProductModal(id) {
     const p = products.find(x => x.id === String(id));
