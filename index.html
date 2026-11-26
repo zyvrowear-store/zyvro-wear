@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ZYVRO.WEAR — Xitoydan O‘zbekistonga BTS orqali arzon yetkazib berish</title>
+<title>ZYVRO.WEAR — Mahsulotlar va buyurtmalar</title>
 <meta name="description" content="Kiyim, krasovka va aksessuarlar Xitoydan to‘g‘ridan-to‘g‘ri. O‘zbekiston bo‘ylab BTS pochta orqali arzon yetkazib berish." />
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,9 +25,12 @@
   details>summary{list-style:none;cursor:pointer} details>summary::-webkit-details-marker{display:none}
   details[open] .plus{transform:rotate(45deg)} .plus{transition:transform .2s}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 </head>
 <body class="antialiased selection:bg-[#D9202E] selection:text-white">
-
+ 
 <script>
   const CONFIG = {
     SHOP_NAME: "ZYVRO.WEAR",
@@ -35,32 +38,41 @@
     CARD_NUMBER: "9860 1606 0235 1506",
     CARD_HOLDER: "Abdurasulov Abduxalim",
     CLICK_LINK: "https://my.click.uz/clickp2p/633C59EABE795B25B3AD53CAC08EB9CE58EDB8FAD6ED0569DAA4C815BFE5EEE2",
-    BTS_URL: "https://www.uzbmarket.uz/bts-punktlari"
+    BTS_URL: "https://www.uzbmarket.uz/bts-punktlari",
+    TELEGRAM_CHANNEL: "https://t.me/zyvro_wear",
+    FIREBASE: { apiKey: "FIREBASE_API_KEY_HERE", authDomain: "YOUR_PROJECT.firebaseapp.com", projectId: "YOUR_PROJECT_ID", appId: "YOUR_APP_ID" }
   };
 </script>
-
+ 
 <div class="bg-[#10131A] text-white text-xs text-center py-2 px-4">Xitoydan to‘g‘ridan-to‘g‘ri · O‘zbekiston bo‘ylab BTS orqali yetkazamiz · 100% oldindan to‘lov</div>
-
-<header class="sticky top-0 z-30 bg-[#F2F3F5]/90 backdrop-blur border-b border-[#DDE1E7]">
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-    <a href="#" class="display font-extrabold text-xl flex items-center gap-2"><span class="w-3 h-3 rounded-full bg-[#D9202E]"></span>ZYVRO.WEAR</a>
-    <nav class="hidden md:flex items-center gap-7 text-sm font-semibold text-neutral-600">
-      <a href="#catalog" class="hover:text-black">Katalog</a>
-      <a href="#how" class="hover:text-black">Qanday ishlaydi</a>
-      <a href="#faq" class="hover:text-black">Savollar</a>
+ 
+<header class="sticky top-0 z-30 bg-[#F2F3F5]/95 backdrop-blur-xl border-b border-[#DDE1E7]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 min-h-16 flex items-center justify-between gap-3">
+    <a href="#" class="display font-extrabold text-xl flex items-center gap-2 shrink-0"><span class="w-3 h-3 rounded-full bg-[#D9202E]"></span>ZYVRO.WEAR</a>
+    <nav class="hidden lg:flex items-center gap-6 text-sm font-semibold text-neutral-600">
+      <a href="#catalog" class="hover:text-black">Mahsulotlar</a><a href="#how" class="hover:text-black">Qanday ishlaydi</a><a href="#faq" class="hover:text-black">Savollar</a>
     </nav>
-    <button onclick="toggleCart(true)" aria-label="Savatchani ochish" class="inline-flex items-center gap-2 bg-[#10131A] text-white pl-4 pr-2 py-2 rounded-full text-sm font-bold hover:bg-black active:scale-95 transition">
-      Savatcha <span id="cartBadge" class="bg-[#D9202E] min-w-[26px] h-[26px] px-1.5 rounded-full text-xs flex items-center justify-center">0</span>
-    </button>
+    <div class="flex items-center gap-2">
+      <button type="button" onclick="currentUser?auth.signOut(): (setAuthMode('login'),openAuth())" class="border border-[#DDE1E7] bg-white px-3 py-2.5 rounded-full text-xs font-bold">Akkaunt</button>
+      <button type="button" onclick="goToOrders()" class="inline-flex items-center gap-2 border border-[#DDE1E7] bg-white text-[#10131A] px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:border-[#D9202E] hover:text-[#D9202E] active:scale-95 transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 6h16M8 10h8M8 14h6"/></svg>
+        <span class="hidden sm:inline">Buyurtmalarim</span><span class="sm:hidden">Buyurtma</span>
+        <span id="ordersBadge" class="min-w-5 h-5 px-1 rounded-full bg-[#FCE8EA] text-[#D9202E] text-[10px] flex items-center justify-center">0</span>
+      </button>
+      <button type="button" onclick="toggleCart(true)" aria-label="Savatchani ochish" class="inline-flex items-center gap-2 bg-[#10131A] text-white pl-3 sm:pl-4 pr-2 py-2 rounded-full text-xs sm:text-sm font-bold hover:bg-[#D9202E] active:scale-95 transition">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3h2l2.2 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 2-1.6L22 7H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>
+        Savatcha <span id="cartBadge" class="bg-[#D9202E] min-w-[24px] h-[24px] px-1.5 rounded-full text-xs flex items-center justify-center">0</span>
+      </button>
+    </div>
   </div>
 </header>
-
+ 
 <!-- HERO: yo‘l xaritasi -->
 <section class="bg-[#10131A] text-white overflow-hidden">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-14 sm:pt-20 sm:pb-20">
     <h1 class="display font-extrabold text-4xl sm:text-6xl lg:text-7xl leading-[1.02] max-w-3xl">Xitoydan to‘g‘ri sizning BTS punktingizgacha.</h1>
     <p class="mt-5 text-neutral-400 text-sm sm:text-base max-w-xl leading-relaxed">Kiyim, krasovka va aksessuarlarni vositachisiz, zavod narxiga yaqin baholarda olib kelamiz. Mahsulotni tanlang, razmerni belgilang, yaqin BTS punktini kiriting.</p>
-
+ 
     <div class="mt-12 sm:mt-16" aria-label="Yetkazib berish yo‘li">
       <div class="relative h-8">
         <div class="route-line absolute left-2 right-2 top-1/2 h-[2px]"></div>
@@ -76,25 +88,25 @@
         <div class="text-right">Sizning BTS<div class="font-normal text-neutral-500">Viloyatingizda</div></div>
       </div>
     </div>
-
+ 
     <div class="mt-10 flex flex-wrap gap-3">
-      <a href="#catalog" class="bg-white text-black font-bold text-sm px-6 py-3.5 rounded-full hover:bg-[#D9202E] hover:text-white transition">Katalogni ko‘rish</a>
+      <a href="#catalog" class="bg-white text-black font-bold text-sm px-6 py-3.5 rounded-full hover:bg-[#D9202E] hover:text-white transition">Mahsulotlarni ko‘rish</a>
       <a href="#how" class="border border-white/25 text-white font-semibold text-sm px-6 py-3.5 rounded-full hover:bg-white/10 transition">Qanday buyurtma beriladi</a>
     </div>
   </div>
 </section>
-
+ 
 <!-- Afzalliklar -->
 <section class="max-w-6xl mx-auto px-4 sm:px-6 py-10 grid grid-cols-1 sm:grid-cols-3 gap-px bg-[#DDE1E7] border border-[#DDE1E7] rounded-2xl overflow-hidden -mt-6 relative z-10 shadow-sm">
   <div class="bg-white p-5"><div class="font-extrabold">Arzon narx</div><p class="text-sm text-neutral-600 mt-1">Xitoy ishlab chiqaruvchilaridan to‘g‘ridan-to‘g‘ri, ortiqcha ustamasiz.</p></div>
   <div class="bg-white p-5"><div class="font-extrabold">BTS bilan butun respublikaga</div><p class="text-sm text-neutral-600 mt-1">Viloyatingizdagi eng yaqin BTS punktidan olib ketasiz.</p></div>
   <div class="bg-white p-5"><div class="font-extrabold">Aniq muddat</div><p class="text-sm text-neutral-600 mt-1">Har bir mahsulot kartochkasida yetkazish vaqti yozilgan.</p></div>
 </section>
-
+ 
 <!-- Katalog -->
 <main id="catalog" class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 pb-12">
   <div class="flex items-end justify-between mb-6">
-    <h2 class="display font-extrabold text-3xl sm:text-4xl">Katalog</h2>
+    <h2 class="display font-extrabold text-3xl sm:text-4xl">Mahsulotlar</h2>
     <span id="countLabel" class="text-sm text-neutral-500"></span>
   </div>
   <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 mb-8">
@@ -109,7 +121,7 @@
       </select>
     </div>
   </div>
-
+ 
   <div id="loading" class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
     <div class="bg-white rounded-xl p-3 animate-pulse"><div class="aspect-[4/5] bg-neutral-200 rounded-lg"></div><div class="h-4 bg-neutral-200 rounded mt-3 w-2/3"></div></div>
     <div class="bg-white rounded-xl p-3 animate-pulse"><div class="aspect-[4/5] bg-neutral-200 rounded-lg"></div><div class="h-4 bg-neutral-200 rounded mt-3 w-2/3"></div></div>
@@ -117,20 +129,40 @@
   </div>
   <div id="productsGrid" class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
 </main>
+ 
+
+<!-- HARIDLAR TARIXI -->
+<section id="orders" class="bg-white border-y border-[#DDE1E7]">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
+    <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+      <div><p class="text-xs font-bold tracking-widest text-[#D9202E] uppercase">Buyurtmalar nazorati</p>
+        <h2 class="display font-extrabold text-3xl sm:text-4xl mt-1">Buyurtmalarim</h2>
+        <p class="text-sm text-neutral-500 mt-2">Xaridlaringiz, mahsulotlaringiz va yetkazib berish holatini shu yerdan kuzatib boring.</p></div>
+      <button id="refreshOrders" type="button" class="border border-[#DDE1E7] rounded-full px-4 py-2 text-sm font-bold hover:border-black">Yangilash</button>
+    </div>
+    <div id="ordersLogin" class="bg-[#F2F3F5] rounded-2xl p-5 sm:p-6 max-w-xl">
+      <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 6h16M8 10h8M8 14h6"/></svg></div>
+        <div><p class="font-bold">Buyurtmalaringiz shu yerda saqlanadi</p><p class="text-sm text-neutral-600 mt-1">Buyurtma bergan ushbu brauzeringiz orqali kirsangiz, tarixingiz avtomatik ko‘rinadi. Telegram nomi yoki qo‘shimcha ma’lumot so‘ralmaydi.</p></div>
+      </div>
+    </div>
+    <div id="ordersList" class="hidden space-y-3 mt-5"></div>
+    <p class="text-xs text-neutral-500 mt-4">Buyurtma holati yangilanganda shu bo‘limda ko‘rinadi. Xaridlaringiz ushbu brauzerda saqlanadi.</p>
+  </div>
+</section>
 
 <!-- Qanday ishlaydi -->
 <section id="how" class="bg-white border-y border-[#DDE1E7]">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
     <h2 class="display font-extrabold text-3xl sm:text-4xl mb-8">To‘rt qadamda sizda</h2>
     <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">1</div><div class="font-bold mt-3">Tanlang</div><p class="text-sm text-neutral-600 mt-1">Katalogdan mahsulot va razmerni tanlab, savatchaga qo‘shing.</p></li>
+      <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">1</div><div class="font-bold mt-3">Tanlang</div><p class="text-sm text-neutral-600 mt-1">Mahsulotlardan mahsulot va razmerni tanlab, savatchaga qo‘shing.</p></li>
       <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">2</div><div class="font-bold mt-3">To‘lang</div><p class="text-sm text-neutral-600 mt-1">Karta yoki Click orqali 100% to‘lang, to‘lagan odam ismini yozing.</p></li>
       <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">3</div><div class="font-bold mt-3">Tasdiq</div><p class="text-sm text-neutral-600 mt-1">To‘lov tushgach, Telegram orqali siz bilan bog‘lanamiz.</p></li>
       <li><div class="w-9 h-9 rounded-full bg-[#D9202E] text-white font-bold flex items-center justify-center">4</div><div class="font-bold mt-3">Oling</div><p class="text-sm text-neutral-600 mt-1">Tovar BTS punktingizga yetgach, xabar beramiz va olib ketasiz.</p></li>
     </ol>
   </div>
 </section>
-
+ 
 <!-- FAQ -->
 <section id="faq" class="max-w-3xl mx-auto px-4 sm:px-6 py-14">
   <h2 class="display font-extrabold text-3xl sm:text-4xl mb-6">Ko‘p beriladigan savollar</h2>
@@ -141,12 +173,13 @@
     <details class="py-4"><summary class="flex justify-between font-bold">Razmer to‘g‘ri kelmasa-chi?<span class="plus text-xl">+</span></summary><p class="text-sm text-neutral-600 mt-2">Buyurtmadan oldin Telegram orqali yozing, razmer bo‘yicha maslahat beramiz.</p></details>
   </div>
 </section>
-
+ 
 <footer class="bg-[#10131A] text-neutral-400 py-10 px-4 text-center text-xs space-y-1">
   <div class="display font-extrabold text-white text-lg">ZYVRO.WEAR</div>
   <div>Xitoydan O‘zbekistonga BTS orqali arzon yetkazib berish</div>
+  <a class="inline-flex mt-3 text-white underline underline-offset-4 font-semibold" href="https://t.me/zyvro_wear" target="_blank" rel="noopener">Telegram kanalimiz: @zyvro_wear</a>
 </footer>
-
+ 
 <!-- MAHSULOT OYNASI -->
 <div id="productModal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-end sm:items-center justify-center sm:p-6" onclick="if(event.target===this) closeProductModal()" role="dialog" aria-modal="true">
   <div class="bg-white w-full max-w-3xl rounded-t-3xl sm:rounded-3xl overflow-hidden max-h-[94vh] flex flex-col md:flex-row relative">
@@ -166,13 +199,17 @@
           <div class="flex justify-between mb-2 text-sm"><span class="font-bold">Razmer</span><span id="selectedSizeLabel" class="font-extrabold"></span></div>
           <div id="modalSizes" class="flex flex-wrap gap-2"></div>
         </div>
+        <div>
+          <div class="flex justify-between mb-2 text-sm"><span class="font-bold">Rang</span><span id="selectedColorLabel" class="font-extrabold"></span></div>
+          <div id="modalColors" class="flex flex-wrap gap-2"></div>
+        </div>
         <div class="pt-3 border-t border-[#DDE1E7]"><div class="text-sm font-bold mb-1">Tavsif</div><p id="modalDesc" class="text-sm text-neutral-600 leading-relaxed whitespace-pre-line"></p></div>
       </div>
       <button id="modalAddBtn" class="w-full bg-[#10131A] text-white font-bold py-3.5 rounded-full hover:bg-[#D9202E] active:scale-[.99] transition">Savatchaga qo‘shish</button>
     </div>
   </div>
 </div>
-
+ 
 <!-- SAVATCHA / TO‘LOV -->
 <div id="cartModal" class="fixed inset-0 z-50 hidden bg-black/70" onclick="if(event.target===this) toggleCart(false)" role="dialog" aria-modal="true">
   <div id="cartPanel" class="drawer absolute right-0 top-0 h-full w-full max-w-lg bg-white flex flex-col translate-x-full">
@@ -180,27 +217,25 @@
       <div><h2 class="display font-extrabold text-xl">Savatcha va to‘lov</h2><p class="text-xs text-neutral-500">100% oldindan to‘lov · BTS pochta</p></div>
       <button onclick="toggleCart(false)" aria-label="Yopish" class="w-9 h-9 rounded-full bg-[#F2F3F5] hover:bg-black hover:text-white text-lg transition">&times;</button>
     </div>
-
+ 
     <div class="p-5 sm:p-6 overflow-y-auto space-y-5 flex-1">
       <div id="cartItems" class="space-y-2.5"></div>
       <div class="flex items-center justify-between pt-3 border-t border-[#DDE1E7] font-extrabold"><span>Jami to‘lov (100%):</span><span id="cartTotal" class="text-xl">0 so‘m</span></div>
-
+ 
       <form id="orderForm" class="space-y-4">
         <div><label for="custName" class="block text-xs font-bold text-neutral-600 mb-1">Ism va familiyangiz *</label>
           <input id="custName" required autocomplete="name" placeholder="Masalan: Jasur Alimov" class="w-full border border-[#C9CED6] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" /></div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 gap-3">
           <div><label for="custPhone" class="block text-xs font-bold text-neutral-600 mb-1">Telefon raqam *</label>
             <input id="custPhone" type="tel" required autocomplete="tel" placeholder="+998 90 123 45 67" class="w-full border border-[#C9CED6] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" /></div>
-          <div><label for="custTg" class="block text-xs font-bold text-neutral-600 mb-1">Telegram @username *</label>
-            <input id="custTg" required placeholder="@username" class="w-full border border-[#C9CED6] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" /></div>
         </div>
-
+ 
         <div class="bg-[#EEF3FB] border border-[#C9D8F0] rounded-2xl p-4 space-y-2.5">
           <div class="text-sm font-extrabold">Yetkazish: viloyatingizdagi BTS punkti</div>
           <p class="text-xs text-neutral-700 leading-relaxed">Eng yaqin BTS punktini ro‘yxatdan toping va manzilini quyiga yozing. <a href="https://www.uzbmarket.uz/bts-punktlari" target="_blank" rel="noopener" class="font-bold underline text-blue-700">BTS punktlari ro‘yxati ↗</a></p>
           <input id="custAddress" required placeholder="Viloyat, shahar/tuman va BTS punkti manzili" class="w-full bg-white border border-[#C9D8F0] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
         </div>
-
+ 
         <div class="bg-[#F2F3F5] border border-[#DDE1E7] rounded-2xl p-4 space-y-3">
           <div class="text-sm font-extrabold">To‘lov kartasi</div>
           <div class="flex items-center justify-between bg-white px-3.5 py-2.5 rounded-xl border border-[#C9CED6] gap-3">
@@ -209,241 +244,251 @@
           </div>
           <a id="clickBtn" target="_blank" rel="noopener" class="block w-full text-center bg-blue-600 text-white text-sm font-bold py-2.5 rounded-xl hover:bg-blue-700 transition">Click orqali to‘lash</a>
         </div>
-
+ 
         <div><label for="payerName" class="block text-xs font-bold text-neutral-600 mb-1">To‘lovni amalga oshirgan shaxsning ismi *</label>
           <input id="payerName" required placeholder="Pul tashlagan karta egasining ism-familiyasi" class="w-full border border-[#C9CED6] rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:border-black" />
           <p class="text-xs text-neutral-500 mt-1">To‘lovni tezroq topib tasdiqlashimiz uchun ismni aniq yozing.</p></div>
-
+ 
         <button type="submit" id="submitBtn" class="w-full bg-[#D9202E] text-white font-bold py-3.5 rounded-full hover:bg-[#b81a26] transition disabled:opacity-60">Zakazni tasdiqlash</button>
       </form>
     </div>
   </div>
 </div>
-
+ 
+<div id="authModal" class="fixed inset-0 z-[70] hidden bg-black/70 items-center justify-center p-4" role="dialog" aria-modal="true">
+ <div class="bg-white w-full max-w-md rounded-3xl p-6 sm:p-8 relative">
+  <button type="button" onclick="closeAuth()" class="absolute right-4 top-3 text-2xl">&times;</button>
+  <div class="display text-2xl font-extrabold">ZYVRO.WEAR</div><p class="text-sm text-neutral-500 mt-1">Savatchangiz va buyurtmalaringiz akkauntingizda saqlanadi.</p>
+  <div class="flex gap-2 mt-5"><button id="authLoginTab" onclick="setAuthMode('login')" class="flex-1 rounded-full py-2 bg-black text-white text-sm font-bold">Kirish</button><button id="authRegisterTab" onclick="setAuthMode('register')" class="flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold">Ro‘yxatdan o‘tish</button></div>
+  <form id="authForm" class="space-y-3 mt-5"><input id="authEmail" type="email" required autocomplete="email" placeholder="Email manzilingiz" class="w-full border rounded-xl px-4 py-3 text-sm"><input id="authPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="ZYVRO.WEAR paroli (kamida 6 belgi)" class="w-full border rounded-xl px-4 py-3 text-sm"><input id="authPassword2" type="password" minlength="6" placeholder="Parolni takrorlang" class="hidden w-full border rounded-xl px-4 py-3 text-sm"><button id="authSubmit" class="w-full bg-[#D9202E] text-white rounded-full py-3 font-bold">Kirish</button></form>
+  <button id="forgotPassword" onclick="resetPassword()" class="text-xs underline mt-4">Parolni unutdingizmi?</button><p id="authError" class="text-sm text-red-600 mt-3"></p>
+  <p class="text-[11px] text-neutral-500 mt-3">Bu yerda email manzilingiz va ZYVRO.WEAR uchun alohida parol ishlatiladi. Email akkauntingiz parolini kiritmang.</p>
+ </div>
+</div>
 <div id="toastBox" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] w-[92%] max-w-sm space-y-2 pointer-events-none"></div>
+ 
 
 <script>
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-  const money = (n) => `${Number(n || 0).toLocaleString("ru-RU")} so‘m`;
+  const money = (n) => `${Number(n || 0).toLocaleString("uz-UZ")} so‘m`;
   const PLACEHOLDER = "https://placehold.co/800x800/f2f3f5/10131a?text=ZYVRO.WEAR";
-
   $("clickBtn").href = CONFIG.CLICK_LINK;
   $("cardNum").textContent = CONFIG.CARD_NUMBER;
   $("cardHolder").textContent = CONFIG.CARD_HOLDER;
 
-  let products = [], activeCategory = "Barchasi", currentProduct = null, selectedSize = "";
-  let cart = [];
-  try { cart = JSON.parse(localStorage.getItem("zyvro_cart_v2") || "[]"); } catch (e) { cart = []; }
+  let products = [], activeCategory = "Barchasi", currentProduct = null, selectedSize = "", selectedColor = "";
+  let currentUser = null, pendingAdd = null, authMode = "login", cart = [];
+  let authReady = false;
+  try { firebase.initializeApp(CONFIG.FIREBASE); } catch(e) {}
+  const auth = firebase.auth(), db = firebase.firestore();
+  const CART_KEY = () => currentUser ? "zyvro_cart_"+currentUser.uid : "";
+  async function loadAccountCart(){ if(!currentUser)return; try{const snap=await db.collection("carts").doc(currentUser.uid).get();cart=snap.exists?(snap.data().items||[]):[];saveCartLocal();updateCartUI();}catch(e){toast("Savatchani yuklashda xatolik","err");} }
+  let cartSaveTimer;
+  function saveCart(){ if(!currentUser)return; try{localStorage.setItem(CART_KEY(),JSON.stringify(cart));}catch(_){} clearTimeout(cartSaveTimer);cartSaveTimer=setTimeout(()=>db.collection("carts").doc(currentUser.uid).set({items:cart,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>toast("Savatcha sinxronlanmadi","err")),350); }
+  function saveCartLocal(){try{localStorage.setItem(CART_KEY(),JSON.stringify(cart));}catch(_){}}
+  function setAuthMode(mode){authMode=mode;$("authPassword2").classList.toggle("hidden",mode!=="register");$("forgotPassword").classList.toggle("hidden",mode!=="login");$("authSubmit").textContent=mode==="login"?"Kirish":"Ro‘yxatdan o‘tish";$("authLoginTab").className=mode==="login"?"flex-1 rounded-full py-2 bg-black text-white text-sm font-bold":"flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold";$("authRegisterTab").className=mode==="register"?"flex-1 rounded-full py-2 bg-black text-white text-sm font-bold":"flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold";$("authError").textContent="";}
+  function openAuth(){ $("authModal").classList.remove("hidden");$("authModal").classList.add("flex");document.body.style.overflow="hidden"; }
+  function closeAuth(){ $("authModal").classList.add("hidden");$("authModal").classList.remove("flex");document.body.style.overflow=""; }
+  function requireLogin(callback){if(currentUser){callback?.();return true;}pendingAdd=callback;setAuthMode("login");openAuth();return false;}
+  async function resetPassword(){const email=$("authEmail").value.trim();if(!email)return $("authError").textContent="Avval email manzilingizni kiriting.";try{await auth.sendPasswordResetEmail(email);$("authError").textContent="Parolni tiklash havolasi emailingizga yuborildi.";}catch(e){$("authError").textContent=e.message;}}
+  $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("authEmail").value.trim(),pass=$("authPassword").value;$("authSubmit").disabled=true;try{if(authMode==="register"){if(pass!==$("authPassword2").value)throw Error("Parollar mos emas");await auth.createUserWithEmailAndPassword(email,pass);}else await auth.signInWithEmailAndPassword(email,pass);closeAuth();}catch(err){$("authError").textContent=err.code==="auth/email-already-in-use"?"Bu email avval ro‘yxatdan o‘tgan. Kirish bo‘limidan foydalaning.":err.message;}finally{$("authSubmit").disabled=false;}});
+  auth.onAuthStateChanged(async user=>{currentUser=user;authReady=true;if(user){await loadAccountCart();if(pendingAdd){const cb=pendingAdd;pendingAdd=null;cb();}loadCustomerOrders();}else{cart=[];updateCartUI();$("ordersLogin").classList.remove("hidden");$("ordersList").classList.add("hidden");}});
+
 
   const parseList = (raw, fallback) => {
-    const l = String(raw || "").split(",").map(s => s.trim()).filter(Boolean);
-    return l.length ? l : fallback;
+    const list = String(raw || "").split(",").map(x => x.trim()).filter(Boolean);
+    return list.length ? list : fallback;
   };
   const getImgs = (p) => parseList(p.rasmlar || p.rasm, [PLACEHOLDER]);
-  const getSizes = (p) => parseList(p.razmerlar, ["Standard"]);
-
+  const getSizes = (p) => parseList(p.razmerlar, ["Standart"]);
+  const getColors = (p) => parseList(p.ranglar || p.rang, []);
+  function colorImageMap(p) {
+    const raw = p.rang_rasmlari || p.rangRasmlari || "";
+    if (!raw) return {};
+    try { return typeof raw === "object" ? raw : JSON.parse(raw); } catch (_) { return {}; }
+  }
+  function imagesForColor(p, color) {
+    const map = colorImageMap(p);
+    const matched = map[color];
+    if (Array.isArray(matched)) return matched.filter(Boolean);
+    if (matched) return parseList(matched, []);
+    return getImgs(p);
+  }
   function toast(msg, type = "ok") {
     const el = document.createElement("div");
     el.className = `toast pointer-events-auto text-sm font-semibold px-4 py-3 rounded-xl shadow-lg text-white ${type === "err" ? "bg-[#D9202E]" : "bg-[#10131A]"}`;
-    el.textContent = msg;
-    $("toastBox").appendChild(el);
+    el.textContent = msg; $("toastBox").appendChild(el);
     setTimeout(() => el.remove(), 4000);
   }
-
   async function loadProducts() {
     try {
       const res = await fetch(CONFIG.SCRIPT_URL);
       const data = await res.json();
-      products = (data.products || []).map(p => ({ ...p, id: String(p.id) }));
+      products = (data.products || []).map(p => ({...p, id:String(p.id)}));
       $("loading").classList.add("hidden");
       renderCategories(); renderProducts();
-    } catch (e) {
+    } catch (_) {
       $("loading").innerHTML = `<p class="col-span-full text-center text-neutral-500 py-12 text-sm">Mahsulotlar yuklanmadi. Internetni tekshirib, sahifani yangilang.</p>`;
     }
     updateCartUI();
   }
-
   function renderCategories() {
-    const cats = ["Barchasi", ...new Set(products.map(p => p.kategoriya).filter(Boolean))];
-    $("categories").innerHTML = cats.map(c => `
-      <button data-cat="${esc(c)}" class="cat px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition ${activeCategory === c ? "bg-[#10131A] text-white" : "bg-white border border-[#DDE1E7] text-neutral-700 hover:border-black"}">${esc(c)}</button>`).join("");
-    document.querySelectorAll(".cat").forEach(b => b.onclick = () => { activeCategory = b.dataset.cat; renderCategories(); renderProducts(); });
+    const cats = ["Barchasi", ...new Set(products.map(p => p.kategoriya || p.category).filter(Boolean))];
+    $("categories").innerHTML = cats.map(c => `<button data-cat="${esc(c)}" class="cat px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition ${activeCategory === c ? "bg-[#10131A] text-white" : "bg-white border border-[#DDE1E7] text-neutral-700 hover:border-black"}">${esc(c)}</button>`).join("");
+    document.querySelectorAll(".cat").forEach(b => b.onclick = () => { activeCategory=b.dataset.cat; renderCategories(); renderProducts(); });
   }
-
   function renderProducts() {
     const q = $("searchInput").value.toLowerCase().trim();
-    let list = activeCategory === "Barchasi" ? [...products] : products.filter(p => p.kategoriya === activeCategory);
+    let list = activeCategory === "Barchasi" ? [...products] : products.filter(p => (p.kategoriya || p.category) === activeCategory);
     if (q) list = list.filter(p => String(p.nomi).toLowerCase().includes(q) || String(p.tavsif).toLowerCase().includes(q));
-    const s = $("sortSel").value;
-    if (s) list.sort((a, b) => s === "asc" ? a.narxi - b.narxi : b.narxi - a.narxi);
+    const sort = $("sortSel").value;
+    if (sort) list.sort((a,b) => sort === "asc" ? Number(a.narxi)-Number(b.narxi) : Number(b.narxi)-Number(a.narxi));
     $("countLabel").textContent = list.length ? `${list.length} ta mahsulot` : "";
-
     const grid = $("productsGrid");
-    if (!list.length) { grid.innerHTML = `<p class="col-span-full text-center text-neutral-500 py-16 text-sm">Hech narsa topilmadi. Boshqa so‘z yoki bo‘limni sinab ko‘ring.</p>`; return; }
-
+    if (!list.length) { grid.innerHTML = `<p class="col-span-full text-center text-neutral-500 py-16 text-sm">Hech narsa topilmadi. Boshqa so‘zni sinab ko‘ring.</p>`; return; }
     grid.innerHTML = list.map(p => {
-      const imgs = getImgs(p), sizes = getSizes(p);
-      const old = Number(p.eski_narx) > Number(p.narxi) ? Number(p.eski_narx) : 0;
-      const off = old ? Math.round((1 - p.narxi / old) * 100) : 0;
-      return `
-      <div role="button" tabindex="0" data-id="${esc(p.id)}" class="card group text-left bg-white rounded-2xl border border-[#DDE1E7] overflow-hidden flex flex-col hover:border-black transition cursor-pointer">
-        <div class="relative aspect-[4/5] bg-[#F2F3F5] overflow-hidden">
-          <div class="slider flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar">
-            ${imgs.map((u, i) => `<img src="${esc(u)}" alt="${esc(p.nomi)}" ${i ? 'loading="lazy"' : ""} draggable="false" class="w-full h-full object-cover shrink-0 snap-center" style="min-width:100%" />`).join("")}
-          </div>
-          ${imgs.length > 1 ? `<div class="dots absolute bottom-2.5 left-0 right-0 flex justify-center gap-1 pointer-events-none">${imgs.map((_, i) => `<span class="dot h-1.5 rounded-full bg-white transition-all ${i ? "w-1.5 opacity-60" : "w-4"}"></span>`).join("")}</div>` : ""}
-          <span class="absolute top-2.5 left-2.5 bg-white text-xs font-semibold px-2.5 py-1 rounded-full">${esc(p.yetkazish_vaqti || "2–4 kun")}</span>
-          ${off ? `<span class="absolute top-2.5 right-2.5 bg-[#D9202E] text-white text-xs font-bold px-2 py-1 rounded-full">−${off}%</span>` : ""}
-        </div>
-        <div class="p-3.5 sm:p-4 flex-1 flex flex-col gap-2">
-          <div><div class="text-xs text-neutral-500">${esc(p.kategoriya || "Wear")}</div><h3 class="font-bold text-sm sm:text-base line-clamp-1">${esc(p.nomi)}</h3></div>
-          <div class="flex flex-wrap gap-1">${sizes.slice(0, 4).map(z => `<span class="text-[11px] font-semibold bg-[#F2F3F5] text-neutral-600 px-2 py-0.5 rounded-md">${esc(z)}</span>`).join("")}${sizes.length > 4 ? `<span class="text-[11px] text-neutral-400">+${sizes.length - 4}</span>` : ""}</div>
-          <div class="mt-auto pt-1 flex items-baseline gap-2"><span class="font-extrabold">${money(p.narxi)}</span>${old ? `<s class="text-xs text-neutral-400">${money(old)}</s>` : ""}</div>
-        </div>
-      </div>`;
+      const imgs=getImgs(p), sizes=getSizes(p), old=Number(p.eski_narx)>Number(p.narxi)?Number(p.eski_narx):0;
+      const off=old?Math.round((1-Number(p.narxi)/old)*100):0;
+      return `<button data-id="${esc(p.id)}" class="card group text-left bg-white rounded-2xl border border-[#DDE1E7] overflow-hidden flex flex-col hover:border-black transition">
+        <div class="relative aspect-[4/5] bg-[#F2F3F5] overflow-hidden"><img src="${esc(imgs[0])}" alt="${esc(p.nomi)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+        <span class="absolute top-2.5 left-2.5 bg-white text-xs font-semibold px-2.5 py-1 rounded-full">${esc(p.yetkazish_vaqti || "15–20 kun")}</span>
+        ${off?`<span class="absolute top-2.5 right-2.5 bg-[#D9202E] text-white text-xs font-bold px-2 py-1 rounded-full">−${off}%</span>`:""}</div>
+        <div class="p-3.5 sm:p-4 flex-1 flex flex-col gap-2"><div><div class="text-xs text-neutral-500">${esc(p.kategoriya || p.category || "ZYVRO.WEAR")}</div><h3 class="font-bold text-sm sm:text-base line-clamp-1">${esc(p.nomi)}</h3></div>
+        <div class="flex flex-wrap gap-1">${sizes.slice(0,4).map(z=>`<span class="text-[11px] font-semibold bg-[#F2F3F5] text-neutral-600 px-2 py-0.5 rounded-md">${esc(z)}</span>`).join("")}</div>
+        <div class="mt-auto pt-1 flex items-baseline gap-2"><span class="font-extrabold">${money(p.narxi)}</span>${old?`<s class="text-xs text-neutral-400">${money(old)}</s>`:""}</div></div></button>`;
     }).join("");
-    document.querySelectorAll(".card").forEach(c => {
-      c.onclick = () => openProductModal(c.dataset.id);
-      c.onkeydown = (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openProductModal(c.dataset.id); } };
-    });
-    initSliders();
+    document.querySelectorAll(".card").forEach(c => c.onclick=()=>openProductModal(c.dataset.id));
   }
-
-  /* ---- Kartochka rasmlari: surish (swipe) + har 3 sekundda avtomatik almashish ---- */
-  const SLIDE_INTERVAL = 3000; // ms — 3000 = 3 sekund (shu yerda o‘zgartirasiz)
-
-  function initSliders() {
-    document.querySelectorAll(".slider").forEach(sl => {
-      const dots = sl.parentElement.querySelectorAll(".dot");
-      if (!dots.length) return;
-      sl.addEventListener("scroll", () => {
-        const i = Math.round(sl.scrollLeft / sl.clientWidth);
-        dots.forEach((d, k) => { d.classList.toggle("w-4", k === i); d.classList.toggle("w-1.5", k !== i); d.classList.toggle("opacity-60", k !== i); });
-      }, { passive: true });
-      // odam surgan zahoti shu kartochka avtomatik almashishdan butunlay to‘xtaydi
-      ["touchstart", "touchmove", "pointerdown", "wheel", "mousedown"].forEach(ev =>
-        sl.addEventListener(ev, () => { sl.dataset.stop = "1"; }, { passive: true }));
-    });
-  }
-
-  setInterval(() => {
-    document.querySelectorAll(".slider").forEach(sl => {
-      const count = sl.children.length;
-      if (count < 2) return;
-      if (sl.dataset.stop) return; // odam surgan — to‘xtaydi
-      const r = sl.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > window.innerHeight) return; // ekranda ko‘rinmasa almashmaydi
-      const next = (Math.round(sl.scrollLeft / sl.clientWidth) + 1) % count;
-      sl.scrollTo({ left: next * sl.clientWidth, behavior: "smooth" });
-    });
-  }, SLIDE_INTERVAL);
-
   function openProductModal(id) {
-    const p = products.find(x => x.id === String(id));
-    if (!p) return;
-    currentProduct = p;
-    const imgs = getImgs(p), sizes = getSizes(p);
-    selectedSize = sizes[0];
-    $("modalMainImg").src = imgs[0]; $("modalMainImg").alt = p.nomi;
-    $("modalCategory").textContent = p.kategoriya || "ZYVRO.WEAR";
-    $("modalDelivery").textContent = `Yetkazish: ${p.yetkazish_vaqti || "2–4 kun"}`;
-    $("modalTitle").textContent = p.nomi;
-    $("modalPrice").textContent = money(p.narxi);
-    $("modalOld").textContent = Number(p.eski_narx) > Number(p.narxi) ? money(p.eski_narx) : "";
-    $("modalDesc").textContent = p.tavsif || "Sifatli material va zamonaviy dizayn.";
-    $("modalThumbs").innerHTML = imgs.map((u, i) => `<button type="button" data-u="${esc(u)}" class="thumb w-16 h-16 rounded-xl overflow-hidden border-2 shrink-0 ${i ? "border-transparent opacity-70" : "border-black"}"><img src="${esc(u)}" alt="" class="w-full h-full object-cover" /></button>`).join("");
-    document.querySelectorAll(".thumb").forEach(b => b.onclick = () => {
-      $("modalMainImg").src = b.dataset.u;
-      document.querySelectorAll(".thumb").forEach(t => { t.classList.add("border-transparent", "opacity-70"); t.classList.remove("border-black"); });
-      b.classList.remove("border-transparent", "opacity-70"); b.classList.add("border-black");
+    const p=products.find(x=>x.id===String(id)); if(!p)return;
+    currentProduct=p;
+    const sizes=getSizes(p), colors=getColors(p);
+    selectedSize=sizes[0]; selectedColor=colors[0] || "";
+    $("modalCategory").textContent=p.kategoriya || p.category || "ZYVRO.WEAR";
+    $("modalDelivery").textContent=`Yetkazish: ${p.yetkazish_vaqti || "15–20 kun"}`;
+    $("modalTitle").textContent=p.nomi; $("modalPrice").textContent=money(p.narxi);
+    $("modalOld").textContent=Number(p.eski_narx)>Number(p.narxi)?money(p.eski_narx):"";
+    $("modalDesc").textContent=p.tavsif || "Sifatli material va zamonaviy dizayn.";
+    renderSizes(sizes); renderColors(colors); renderProductImages(imagesForColor(p, selectedColor));
+    $("modalAddBtn").onclick=()=>{ addToCart(p,selectedSize,selectedColor); closeProductModal(); toggleCart(true); };
+    $("productModal").classList.remove("hidden"); document.body.style.overflow="hidden";
+  }
+  function renderProductImages(imgs) {
+    const list=imgs.length?imgs:[PLACEHOLDER];
+    $("modalMainImg").src=list[0]; $("modalMainImg").alt=currentProduct?.nomi || "";
+    $("modalThumbs").innerHTML=list.map((u,i)=>`<button type="button" data-u="${esc(u)}" class="thumb w-16 h-16 rounded-xl overflow-hidden border-2 shrink-0 ${i?"border-transparent opacity-70":"border-black"}"><img src="${esc(u)}" alt="" class="w-full h-full object-cover"></button>`).join("");
+    document.querySelectorAll(".thumb").forEach(b=>b.onclick=()=>{
+      $("modalMainImg").src=b.dataset.u;
+      document.querySelectorAll(".thumb").forEach(t=>{t.classList.add("border-transparent","opacity-70");t.classList.remove("border-black");});
+      b.classList.remove("border-transparent","opacity-70");b.classList.add("border-black");
     });
-    renderSizes(sizes);
-    $("modalAddBtn").onclick = () => { addToCart(p, selectedSize); closeProductModal(); toggleCart(true); };
-    $("productModal").classList.remove("hidden");
-    document.body.style.overflow = "hidden";
   }
-
   function renderSizes(sizes) {
-    $("selectedSizeLabel").textContent = selectedSize;
-    $("modalSizes").innerHTML = sizes.map(s => `<button type="button" data-s="${esc(s)}" class="sz min-w-[46px] px-3.5 py-2 rounded-xl text-sm font-bold border transition ${selectedSize === s ? "bg-[#10131A] text-white border-[#10131A]" : "bg-white border-[#C9CED6] hover:border-black"}">${esc(s)}</button>`).join("");
-    document.querySelectorAll(".sz").forEach(b => b.onclick = () => { selectedSize = b.dataset.s; renderSizes(sizes); });
+    $("selectedSizeLabel").textContent=selectedSize;
+    $("modalSizes").innerHTML=sizes.map(s=>`<button type="button" data-s="${esc(s)}" class="sz min-w-[46px] px-3.5 py-2 rounded-xl text-sm font-bold border transition ${selectedSize===s?"bg-[#10131A] text-white border-[#10131A]":"bg-white border-[#C9CED6] hover:border-black"}">${esc(s)}</button>`).join("");
+    document.querySelectorAll(".sz").forEach(b=>b.onclick=()=>{selectedSize=b.dataset.s;renderSizes(sizes);});
   }
-
-  function closeProductModal() { $("productModal").classList.add("hidden"); document.body.style.overflow = ""; }
-
-  function addToCart(p, size) {
-    const key = `${p.id}_${size}`;
-    const ex = cart.find(i => i.key === key);
-    if (ex) ex.qty += 1; else cart.push({ key, id: p.id, nomi: p.nomi, size, narxi: Number(p.narxi), qty: 1 });
-    saveCart(); updateCartUI();
+  function renderColors(colors) {
+    const wrap=$("modalColors");
+    $("selectedColorLabel").textContent=selectedColor || "Tanlanmagan";
+    if (!colors.length) { wrap.innerHTML=`<span class="text-xs text-neutral-500">Rang tanlovi mavjud emas</span>`; return; }
+    wrap.innerHTML=colors.map(c=>`<button type="button" data-c="${esc(c)}" class="clr px-3.5 py-2 rounded-xl text-sm font-bold border transition ${selectedColor===c?"bg-[#10131A] text-white border-[#10131A]":"bg-white border-[#C9CED6] hover:border-black"}">${esc(c)}</button>`).join("");
+    document.querySelectorAll(".clr").forEach(b=>b.onclick=()=>{
+      selectedColor=b.dataset.c; renderColors(colors); renderProductImages(imagesForColor(currentProduct,selectedColor));
+    });
   }
-  function changeQty(i, d) { cart[i].qty += d; if (cart[i].qty <= 0) cart.splice(i, 1); saveCart(); updateCartUI(); }
-  function saveCart() { try { localStorage.setItem("zyvro_cart_v2", JSON.stringify(cart)); } catch (e) {} }
-
-  function updateCartUI() {
-    const count = cart.reduce((s, i) => s + i.qty, 0);
-    const total = cart.reduce((s, i) => s + i.qty * i.narxi, 0);
-    $("cartBadge").textContent = count;
-    $("cartTotal").textContent = money(total);
-    $("cartItems").innerHTML = cart.length ? cart.map((it, idx) => `
-      <div class="flex items-center justify-between bg-[#F2F3F5] p-3.5 rounded-2xl gap-3">
-        <div class="min-w-0"><div class="font-bold text-sm truncate">${esc(it.nomi)} <span class="text-xs bg-white px-2 py-0.5 rounded-md ml-1">${esc(it.size)}</span></div><div class="text-xs text-neutral-600 mt-0.5">${money(it.narxi * it.qty)}</div></div>
-        <div class="flex items-center gap-2 shrink-0">
-          <button type="button" data-i="${idx}" data-d="-1" class="qty w-8 h-8 rounded-lg bg-white border border-[#C9CED6] font-bold hover:border-black" aria-label="Kamaytirish">−</button>
-          <span class="text-sm font-extrabold w-5 text-center">${it.qty}</span>
-          <button type="button" data-i="${idx}" data-d="1" class="qty w-8 h-8 rounded-lg bg-white border border-[#C9CED6] font-bold hover:border-black" aria-label="Ko‘paytirish">+</button>
-        </div>
-      </div>`).join("") : `<p class="text-sm text-neutral-500 text-center py-6">Savatchangiz bo‘sh. Katalogdan mahsulot tanlang.</p>`;
-    document.querySelectorAll(".qty").forEach(b => b.onclick = () => changeQty(+b.dataset.i, +b.dataset.d));
+  function closeProductModal(){ $("productModal").classList.add("hidden");document.body.style.overflow=""; }
+  function addToCart(p,size,color) {
+    if(!currentUser){requireLogin(()=>{addToCart(p,size,color);toggleCart(true);});return;}
+    const key=`${p.id}_${size}_${color}`;
+    const ex=cart.find(i=>i.key===key);
+    if(ex)ex.qty++;else cart.push({key,id:p.id,nomi:p.nomi,size,color,narxi:Number(p.narxi),qty:1,image:imagesForColor(p,color)[0]||getImgs(p)[0]});
+    saveCart();updateCartUI();
   }
-
-  function toggleCart(show) {
-    const m = $("cartModal"), panel = $("cartPanel");
-    if (show) { m.classList.remove("hidden"); document.body.style.overflow = "hidden"; requestAnimationFrame(() => panel.classList.remove("translate-x-full")); }
-    else { panel.classList.add("translate-x-full"); document.body.style.overflow = ""; setTimeout(() => m.classList.add("hidden"), 280); }
+  function changeQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);saveCart();updateCartUI();}
+  function updateCartUI(){
+    const count=cart.reduce((s,i)=>s+i.qty,0),total=cart.reduce((s,i)=>s+i.qty*i.narxi,0);
+    $("cartBadge").textContent=count;$("cartTotal").textContent=money(total);
+    $("cartItems").innerHTML=cart.length?cart.map((it,idx)=>`<div class="flex items-center justify-between bg-[#F2F3F5] p-3.5 rounded-2xl gap-3">
+      <div class="min-w-0"><div class="font-bold text-sm truncate">${esc(it.nomi)} <span class="text-xs bg-white px-2 py-0.5 rounded-md ml-1">${esc(it.size)}</span> ${it.color?`<span class="text-xs bg-white px-2 py-0.5 rounded-md">${esc(it.color)}</span>`:""}</div><div class="text-xs text-neutral-600 mt-0.5">${money(it.narxi*it.qty)}</div></div>
+      <div class="flex items-center gap-2 shrink-0"><button type="button" data-i="${idx}" data-d="-1" class="qty w-8 h-8 rounded-lg bg-white border font-bold">−</button><span class="text-sm font-extrabold w-5 text-center">${it.qty}</span><button type="button" data-i="${idx}" data-d="1" class="qty w-8 h-8 rounded-lg bg-white border font-bold">+</button></div></div>`).join(""):`<p class="text-sm text-neutral-500 text-center py-6">Savatchangiz bo‘sh. Mahsulotlardan tanlang.</p>`;
+    document.querySelectorAll(".qty").forEach(b=>b.onclick=()=>changeQty(+b.dataset.i,+b.dataset.d));
   }
-
-  function copyCard() {
-    const num = CONFIG.CARD_NUMBER;
-    (navigator.clipboard ? navigator.clipboard.writeText(num) : Promise.reject())
-      .then(() => toast("Karta raqami nusxalandi"))
-      .catch(() => toast("Nusxalab bo‘lmadi: " + num, "err"));
+  function goToOrders(){
+    document.getElementById("orders").scrollIntoView({behavior:"smooth",block:"start"});
+    loadCustomerOrders();
   }
-
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape") { closeProductModal(); if (!$("cartModal").classList.contains("hidden")) toggleCart(false); } });
-
-  $("orderForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    if (!cart.length) return toast("Avval savatchaga mahsulot qo‘shing", "err");
-    const btn = $("submitBtn");
-    btn.disabled = true; btn.textContent = "Zakaz yuborilmoqda...";
-    try {
-      const total = cart.reduce((s, i) => s + i.qty * i.narxi, 0);
-      const itemsText = cart.map(i => `• ${i.nomi} (${i.size}) x${i.qty} — ${(i.narxi * i.qty).toLocaleString("ru-RU")} so‘m`).join("\n");
-      const payload = {
-        mijoz: $("custName").value.trim(),
-        telefon: $("custPhone").value.trim(),
-        telegram: $("custTg").value.trim(),
-        manzil: `BTS: ${$("custAddress").value.trim()}`,
-        mahsulotlarText: itemsText,
-        jami: total,
-        tolovchiIsm: $("payerName").value.trim()
-      };
-      const res = await fetch(CONFIG.SCRIPT_URL, { method: "POST", body: JSON.stringify(payload) });
-      const result = await res.json();
-      if (result.status === "ok") {
-        toast("Zakazingiz qabul qilindi! To‘lov tekshirilgach Telegram orqali bog‘lanamiz.");
-        cart = []; saveCart(); updateCartUI(); e.target.reset(); toggleCart(false);
-      } else toast("Xatolik: " + (result.message || "Qayta urinib ko‘ring"), "err");
-    } catch (err) {
-      toast("Yuborib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.", "err");
-    } finally {
-      btn.disabled = false; btn.textContent = "Zakazni tasdiqlash";
-    }
+  function toggleCart(show){
+    const m=$("cartModal"),panel=$("cartPanel");
+    if(show){m.classList.remove("hidden");document.body.style.overflow="hidden";requestAnimationFrame(()=>panel.classList.remove("translate-x-full"));}
+    else{panel.classList.add("translate-x-full");document.body.style.overflow="";setTimeout(()=>m.classList.add("hidden"),280);}
+  }
+  function copyCard(){
+    const num=CONFIG.CARD_NUMBER;
+    (navigator.clipboard?navigator.clipboard.writeText(num):Promise.reject()).then(()=>toast("Karta raqami nusxalandi")).catch(()=>toast("Karta raqami: "+num,"err"));
+  }
+  function statusClass(status){
+    if(String(status).toLowerCase().includes("olib ket"))return "bg-emerald-100 text-emerald-800";
+    if(String(status).toLowerCase().includes("to‘lov qilinmagan")||String(status).toLowerCase().includes("tolov qilinmagan"))return "bg-red-100 text-red-800";
+    return "bg-blue-100 text-blue-800";
+  }
+  async function fetchOrders(){
+    if(!currentUser) throw new Error("Buyurtmalarni ko‘rish uchun akkauntga kiring");
+    const token=await currentUser.getIdToken();
+    const url=CONFIG.SCRIPT_URL+`?action=orders&token=${encodeURIComponent(token)}`;
+    const res=await fetch(url);const data=await res.json();
+    if(!res.ok||data.status==="error")throw new Error(data.message||"Buyurtmalar olinmadi");
+    $("ordersLogin").classList.add("hidden");$("ordersList").classList.remove("hidden");
+    renderOrders(data.orders||[]);
+  }
+  function renderOrders(orders){
+    const box=$("ordersList");
+    $("ordersBadge").textContent=orders.length;
+    if(!orders.length){box.innerHTML=`<div class="bg-[#F2F3F5] rounded-2xl p-6 text-sm text-neutral-600"><div class="font-bold text-[#10131A]">Hozircha xarid yo‘q</div><p class="mt-1">Mahsulot tanlang va birinchi buyurtmangizni rasmiylashtiring.</p><a href="#catalog" class="inline-flex mt-4 bg-[#10131A] text-white rounded-full px-5 py-2.5 font-bold text-xs">Mahsulotlarni ko‘rish</a></div>`;return;}
+    box.innerHTML=orders.map(o=>{
+      const unpaid=String(o.holat).toLowerCase().includes("to‘lov qilinmagan")||String(o.holat).toLowerCase().includes("to'lov qilinmagan");
+      const items=String(o.mahsulotlar||"").split("\\n").filter(Boolean);
+      return `<article class="border border-[#DDE1E7] rounded-2xl p-4 sm:p-5 bg-white shadow-sm">
+        <div class="flex flex-wrap justify-between items-start gap-3"><div><div class="text-xs text-neutral-500">${esc(o.vaqt||"")}</div><div class="font-extrabold mt-1">${esc(o.orderId)}</div></div><span class="h-fit rounded-full px-3 py-1 text-xs font-bold ${statusClass(o.holat)}">${esc(o.holat)}</span></div>
+        <div class="mt-4"><div class="text-xs uppercase tracking-wider text-neutral-500 font-bold mb-2">Mahsulotlarim</div><div class="space-y-2">${items.map(item=>`<div class="bg-[#F5F6F8] rounded-xl px-3 py-2.5 text-sm text-neutral-700 whitespace-pre-line">${esc(item.replace(/^•\\s*/,""))}</div>`).join("")}</div></div>
+        <div class="flex items-center justify-between mt-4 pt-3 border-t border-[#E8EAEE]"><span class="text-sm text-neutral-500">Jami to‘lov</span><span class="font-extrabold">${money(o.jami)}</span></div>
+        ${unpaid?`<div class="mt-4 bg-red-50 rounded-xl p-3"><p class="text-sm font-bold text-red-800">To‘lov aniqlanmadi. Qayta to‘lov qilasizmi?</p><div class="flex flex-wrap gap-2 mt-3"><a href="${esc(CONFIG.CLICK_LINK)}" target="_blank" rel="noopener" class="bg-blue-600 text-white rounded-full px-4 py-2 text-xs font-bold">Click orqali to‘lash</a><button type="button" onclick="copyCard()" class="bg-[#10131A] text-white rounded-full px-4 py-2 text-xs font-bold">Karta raqamini nusxalash</button></div><p class="text-xs text-red-700 mt-2">3 kun ichida to‘lov tasdiqlanmasa, buyurtma avtomatik o‘chiriladi.</p></div>`:""}
+      </article>`;
+    }).join("");
+  }
+  async function loadCustomerOrders(){
+    try{await fetchOrders();}
+    catch(err){$("ordersList").classList.remove("hidden");$("ordersList").innerHTML=`<p class="text-sm text-red-700">Buyurtmalarni yuklab bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.</p>`;}
+  }
+  $("refreshOrders").onclick=async()=>{
+    try{await fetchOrders();toast("Buyurtmalar yangilandi");}
+    catch(err){toast(err.message||"Yangilab bo‘lmadi","err");}
+  };
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeProductModal();if(!$("cartModal").classList.contains("hidden"))toggleCart(false);}});
+  $("orderForm").addEventListener("submit",async e=>{
+    e.preventDefault();if(!cart.length)return toast("Avval savatchaga mahsulot qo‘shing","err");
+    const btn=$("submitBtn");btn.disabled=true;btn.textContent="Buyurtma yuborilmoqda...";
+    try{
+      const total=cart.reduce((s,i)=>s+i.qty*i.narxi,0);
+      const itemsText=cart.map(i=>`• ${i.nomi} | Rang: ${i.color||"Tanlanmagan"} | O‘lcham: ${i.size} | ${i.qty} dona — ${(i.narxi*i.qty).toLocaleString("uz-UZ")} so‘m`).join("\n");
+      if(!currentUser){toggleCart(false);return requireLogin(()=>toggleCart(true));}
+      const token=await currentUser.getIdToken();
+      const payload={action:"createOrder",token:token,mijoz:$("custName").value.trim(),telefon:$("custPhone").value.trim(),manzil:`BTS: ${$("custAddress").value.trim()}`,mahsulotlarText:itemsText,mahsulotlar:cart,jami:total,tolovchiIsm:$("payerName").value.trim()};
+      const res=await fetch(CONFIG.SCRIPT_URL,{method:"POST",body:JSON.stringify(payload)});
+      const result=await res.json();
+      if(result.status==="ok"){
+        toast("Buyurtmangiz qabul qilindi. Holatini “Buyurtmalarim” bo‘limida kuzating.");
+        cart=[];saveCart();updateCartUI();e.target.reset();toggleCart(false);
+        fetchOrders().catch(()=>{});
+        goToOrders();
+      }else toast("Xatolik: "+(result.message||"Qayta urinib ko‘ring"),"err");
+    }catch(err){toast("Yuborib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.","err");}
+    finally{btn.disabled=false;btn.textContent="Buyurtmani tasdiqlash";}
   });
-
   loadProducts();
 </script>
+
 </body>
 </html>
+ 
