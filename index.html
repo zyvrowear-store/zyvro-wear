@@ -40,7 +40,14 @@
     CLICK_LINK: "https://my.click.uz/clickp2p/633C59EABE795B25B3AD53CAC08EB9CE58EDB8FAD6ED0569DAA4C815BFE5EEE2",
     BTS_URL: "https://www.uzbmarket.uz/bts-punktlari",
     TELEGRAM_CHANNEL: "https://t.me/zyvro_wear",
-    FIREBASE: {apiKey: "AIzaSyDRDtnBWgalqo3qI1XazHRkBvOAanVf5Xs", authDomain: "zyvro-wear.firebaseapp.com", projectId: "zyvro-wear", appId: "1:1093523089013:web:c528b4603cb4c45043ba3c"}
+    FIREBASE: {
+      apiKey: "AIzaSyDRDtnBWgalqo3qI1XazHRkBvOAanVf5Xs",
+      authDomain: "zyvro-wear.firebaseapp.com",
+      projectId: "zyvro-wear",
+      storageBucket: "zyvro-wear.firebasestorage.app",
+      messagingSenderId: "1093523089013",
+      appId: "1:1093523089013:web:c528b4603cb4c45043ba3c"
+    }
   };
 </script>
  
@@ -53,7 +60,7 @@
       <a href="#catalog" class="hover:text-black">Mahsulotlar</a><a href="#how" class="hover:text-black">Qanday ishlaydi</a><a href="#faq" class="hover:text-black">Savollar</a>
     </nav>
     <div class="flex items-center gap-2">
-      <button type="button" onclick="currentUser?auth.signOut(): (setAuthMode('login'),openAuth())" class="border border-[#DDE1E7] bg-white px-3 py-2.5 rounded-full text-xs font-bold">Akkaunt</button>
+      <button id="authBtn" type="button" onclick="currentUser ? handleLogout() : (setAuthMode('login'), openAuth())" class="border border-[#DDE1E7] bg-white px-3 py-2.5 rounded-full text-xs font-bold hover:border-black transition">Kirish</button>
       <button type="button" onclick="goToOrders()" class="inline-flex items-center gap-2 border border-[#DDE1E7] bg-white text-[#10131A] px-3 sm:px-4 py-2.5 rounded-full text-xs sm:text-sm font-bold hover:border-[#D9202E] hover:text-[#D9202E] active:scale-95 transition">
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 6h16M8 10h8M8 14h6"/></svg>
         <span class="hidden sm:inline">Buyurtmalarim</span><span class="sm:hidden">Buyurtma</span>
@@ -130,8 +137,7 @@
   <div id="productsGrid" class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"></div>
 </main>
  
-
-<!-- HARIDLAR TARIXI -->
+<!-- XARIDLAR TARIXI -->
 <section id="orders" class="bg-white border-y border-[#DDE1E7]">
   <div class="max-w-6xl mx-auto px-4 sm:px-6 py-14">
     <div class="flex flex-wrap items-end justify-between gap-3 mb-6">
@@ -142,11 +148,11 @@
     </div>
     <div id="ordersLogin" class="bg-[#F2F3F5] rounded-2xl p-5 sm:p-6 max-w-xl">
       <div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center"><svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 1 4 17.5z"/><path d="M4 6h16M8 10h8M8 14h6"/></svg></div>
-        <div><p class="font-bold">Buyurtmalaringiz shu yerda saqlanadi</p><p class="text-sm text-neutral-600 mt-1">Buyurtma bergan ushbu brauzeringiz orqali kirsangiz, tarixingiz avtomatik ko‘rinadi. Telegram nomi yoki qo‘shimcha ma’lumot so‘ralmaydi.</p></div>
+        <div><p class="font-bold">Buyurtmalaringiz akkauntingizda saqlanadi</p><p class="text-sm text-neutral-600 mt-1">Buyurtmalar tarixini ko‘rish uchun akkauntingizga kiring. Boshqa qurilmadan kirganingizda ham barcha buyurtmalaringiz ko‘rinadi.</p>
+        <button type="button" onclick="setAuthMode('login'); openAuth()" class="mt-3 bg-[#10131A] text-white rounded-full px-4 py-2 text-xs font-bold hover:bg-[#D9202E] transition">Akkauntga kirish</button></div>
       </div>
     </div>
     <div id="ordersList" class="hidden space-y-3 mt-5"></div>
-    <p class="text-xs text-neutral-500 mt-4">Buyurtma holati yangilanganda shu bo‘limda ko‘rinadi. Xaridlaringiz ushbu brauzerda saqlanadi.</p>
   </div>
 </section>
 
@@ -157,7 +163,7 @@
     <ol class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
       <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">1</div><div class="font-bold mt-3">Tanlang</div><p class="text-sm text-neutral-600 mt-1">Mahsulotlardan mahsulot va razmerni tanlab, savatchaga qo‘shing.</p></li>
       <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">2</div><div class="font-bold mt-3">To‘lang</div><p class="text-sm text-neutral-600 mt-1">Karta yoki Click orqali 100% to‘lang, to‘lagan odam ismini yozing.</p></li>
-      <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">3</div><div class="font-bold mt-3">Tasdiq</div><p class="text-sm text-neutral-600 mt-1">To‘lov tushgach, Telegram orqali siz bilan bog‘lanamiz.</p></li>
+      <li><div class="w-9 h-9 rounded-full bg-[#10131A] text-white font-bold flex items-center justify-center">3</div><div class="font-bold mt-3">Tasdiq</div><p class="text-sm text-neutral-600 mt-1">To‘lov tushgach, saytdagi Buyurtmalarim bo‘limida holat yangilanadi.</p></li>
       <li><div class="w-9 h-9 rounded-full bg-[#D9202E] text-white font-bold flex items-center justify-center">4</div><div class="font-bold mt-3">Oling</div><p class="text-sm text-neutral-600 mt-1">Tovar BTS punktingizga yetgach, xabar beramiz va olib ketasiz.</p></li>
     </ol>
   </div>
@@ -267,7 +273,6 @@
 </div>
 <div id="toastBox" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] w-[92%] max-w-sm space-y-2 pointer-events-none"></div>
  
-
 <script>
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -283,18 +288,90 @@
   try { firebase.initializeApp(CONFIG.FIREBASE); } catch(e) {}
   const auth = firebase.auth(), db = firebase.firestore();
   const CART_KEY = () => currentUser ? "zyvro_cart_"+currentUser.uid : "";
-  async function loadAccountCart(){ if(!currentUser)return; try{const snap=await db.collection("carts").doc(currentUser.uid).get();cart=snap.exists?(snap.data().items||[]):[];saveCartLocal();updateCartUI();}catch(e){toast("Savatchani yuklashda xatolik","err");} }
+
+  async function loadAccountCart(){
+    if(!currentUser)return;
+    try{
+      const snap=await db.collection("carts").doc(currentUser.uid).get();
+      cart=snap.exists?(snap.data().items||[]):[];
+      saveCartLocal();
+      updateCartUI();
+    }catch(e){ toast("Savatchani yuklashda xatolik","err"); }
+  }
+
   let cartSaveTimer;
-  function saveCart(){ if(!currentUser)return; try{localStorage.setItem(CART_KEY(),JSON.stringify(cart));}catch(_){} clearTimeout(cartSaveTimer);cartSaveTimer=setTimeout(()=>db.collection("carts").doc(currentUser.uid).set({items:cart,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>toast("Savatcha sinxronlanmadi","err")),350); }
+  function saveCart(){
+    if(!currentUser)return;
+    try{localStorage.setItem(CART_KEY(),JSON.stringify(cart));}catch(_){}
+    clearTimeout(cartSaveTimer);
+    cartSaveTimer=setTimeout(()=>db.collection("carts").doc(currentUser.uid).set({items:cart,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>toast("Savatcha sinxronlanmadi","err")),350);
+  }
   function saveCartLocal(){try{localStorage.setItem(CART_KEY(),JSON.stringify(cart));}catch(_){}}
-  function setAuthMode(mode){authMode=mode;$("authPassword2").classList.toggle("hidden",mode!=="register");$("forgotPassword").classList.toggle("hidden",mode!=="login");$("authSubmit").textContent=mode==="login"?"Kirish":"Ro‘yxatdan o‘tish";$("authLoginTab").className=mode==="login"?"flex-1 rounded-full py-2 bg-black text-white text-sm font-bold":"flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold";$("authRegisterTab").className=mode==="register"?"flex-1 rounded-full py-2 bg-black text-white text-sm font-bold":"flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold";$("authError").textContent="";}
+
+  function setAuthMode(mode){
+    authMode=mode;
+    $("authPassword2").classList.toggle("hidden",mode!=="register");
+    $("forgotPassword").classList.toggle("hidden",mode!=="login");
+    $("authSubmit").textContent=mode==="login"?"Kirish":"Ro‘yxatdan o‘tish";
+    $("authLoginTab").className=mode==="login"?"flex-1 rounded-full py-2 bg-black text-white text-sm font-bold":"flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold";
+    $("authRegisterTab").className=mode==="register"?"flex-1 rounded-full py-2 bg-black text-white text-sm font-bold":"flex-1 rounded-full py-2 bg-gray-100 text-sm font-bold";
+    $("authError").textContent="";
+  }
+
   function openAuth(){ $("authModal").classList.remove("hidden");$("authModal").classList.add("flex");document.body.style.overflow="hidden"; }
   function closeAuth(){ $("authModal").classList.add("hidden");$("authModal").classList.remove("flex");document.body.style.overflow=""; }
   function requireLogin(callback){if(currentUser){callback?.();return true;}pendingAdd=callback;setAuthMode("login");openAuth();return false;}
-  async function resetPassword(){const email=$("authEmail").value.trim();if(!email)return $("authError").textContent="Avval email manzilingizni kiriting.";try{await auth.sendPasswordResetEmail(email);$("authError").textContent="Parolni tiklash havolasi emailingizga yuborildi.";}catch(e){$("authError").textContent=e.message;}}
-  $("authForm").addEventListener("submit",async e=>{e.preventDefault();const email=$("authEmail").value.trim(),pass=$("authPassword").value;$("authSubmit").disabled=true;try{if(authMode==="register"){if(pass!==$("authPassword2").value)throw Error("Parollar mos emas");await auth.createUserWithEmailAndPassword(email,pass);}else await auth.signInWithEmailAndPassword(email,pass);closeAuth();}catch(err){$("authError").textContent=err.code==="auth/email-already-in-use"?"Bu email avval ro‘yxatdan o‘tgan. Kirish bo‘limidan foydalaning.":err.message;}finally{$("authSubmit").disabled=false;}});
-  auth.onAuthStateChanged(async user=>{currentUser=user;authReady=true;if(user){await loadAccountCart();if(pendingAdd){const cb=pendingAdd;pendingAdd=null;cb();}loadCustomerOrders();}else{cart=[];updateCartUI();$("ordersLogin").classList.remove("hidden");$("ordersList").classList.add("hidden");}});
 
+  function handleLogout(){
+    if(confirm("Akkauntdan chiqmoqchimisiz?")) auth.signOut();
+  }
+
+  async function resetPassword(){
+    const email=$("authEmail").value.trim();
+    if(!email)return $("authError").textContent="Avval email manzilingizni kiriting.";
+    try{
+      await auth.sendPasswordResetEmail(email);
+      $("authError").textContent="Parolni tiklash havolasi emailingizga yuborildi.";
+    }catch(e){ $("authError").textContent=e.message; }
+  }
+
+  $("authForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const email=$("authEmail").value.trim(),pass=$("authPassword").value;
+    $("authSubmit").disabled=true;
+    try{
+      if(authMode==="register"){
+        if(pass!==$("authPassword2").value)throw Error("Parollar mos emas");
+        await auth.createUserWithEmailAndPassword(email,pass);
+        toast("Ro‘yxatdan o‘tdingiz va akkauntga kirdingiz!");
+      }else{
+        await auth.signInWithEmailAndPassword(email,pass);
+        toast("Xush kelibsiz!");
+      }
+      closeAuth();
+    }catch(err){
+      $("authError").textContent=err.code==="auth/email-already-in-use"?"Bu email avval ro‘yxatdan o‘tgan. Kirish bo‘limidan foydalaning.":err.message;
+    }finally{ $("authSubmit").disabled=false; }
+  });
+
+  auth.onAuthStateChanged(async user=>{
+    currentUser=user;
+    authReady=true;
+    const btn=$("authBtn");
+    if(user){
+      btn.textContent=(user.email||"Akkaunt").split("@")[0]+" · Chiqish";
+      await loadAccountCart();
+      if(pendingAdd){const cb=pendingAdd;pendingAdd=null;cb();}
+      loadCustomerOrders();
+    }else{
+      btn.textContent="Kirish";
+      cart=[];
+      updateCartUI();
+      $("ordersBadge").textContent="0";
+      $("ordersLogin").classList.remove("hidden");
+      $("ordersList").classList.add("hidden");
+    }
+  });
 
   const parseList = (raw, fallback) => {
     const list = String(raw || "").split(",").map(x => x.trim()).filter(Boolean);
@@ -371,7 +448,7 @@
     $("modalOld").textContent=Number(p.eski_narx)>Number(p.narxi)?money(p.eski_narx):"";
     $("modalDesc").textContent=p.tavsif || "Sifatli material va zamonaviy dizayn.";
     renderSizes(sizes); renderColors(colors); renderProductImages(imagesForColor(p, selectedColor));
-    $("modalAddBtn").onclick=()=>{ addToCart(p,selectedSize,selectedColor); closeProductModal(); toggleCart(true); };
+    $("modalAddBtn").onclick=()=>{ addToCart(p,selectedSize,selectedColor); closeProductModal(); };
     $("productModal").classList.remove("hidden"); document.body.style.overflow="hidden";
   }
   function renderProductImages(imgs) {
@@ -404,7 +481,7 @@
     const key=`${p.id}_${size}_${color}`;
     const ex=cart.find(i=>i.key===key);
     if(ex)ex.qty++;else cart.push({key,id:p.id,nomi:p.nomi,size,color,narxi:Number(p.narxi),qty:1,image:imagesForColor(p,color)[0]||getImgs(p)[0]});
-    saveCart();updateCartUI();
+    saveCart();updateCartUI();toggleCart(true);
   }
   function changeQty(i,d){cart[i].qty+=d;if(cart[i].qty<=0)cart.splice(i,1);saveCart();updateCartUI();}
   function updateCartUI(){
@@ -417,7 +494,7 @@
   }
   function goToOrders(){
     document.getElementById("orders").scrollIntoView({behavior:"smooth",block:"start"});
-    loadCustomerOrders();
+    if(currentUser) loadCustomerOrders();
   }
   function toggleCart(show){
     const m=$("cartModal"),panel=$("cartPanel");
@@ -430,7 +507,7 @@
   }
   function statusClass(status){
     if(String(status).toLowerCase().includes("olib ket"))return "bg-emerald-100 text-emerald-800";
-    if(String(status).toLowerCase().includes("to‘lov qilinmagan")||String(status).toLowerCase().includes("tolov qilinmagan"))return "bg-red-100 text-red-800";
+    if(String(status).toLowerCase().includes("to‘lov qilinmagan")||String(status).toLowerCase().includes("tolov qilinmagan")||String(status).toLowerCase().includes("to'lov qilinmagan"))return "bg-red-100 text-red-800";
     return "bg-blue-100 text-blue-800";
   }
   async function fetchOrders(){
@@ -448,10 +525,10 @@
     if(!orders.length){box.innerHTML=`<div class="bg-[#F2F3F5] rounded-2xl p-6 text-sm text-neutral-600"><div class="font-bold text-[#10131A]">Hozircha xarid yo‘q</div><p class="mt-1">Mahsulot tanlang va birinchi buyurtmangizni rasmiylashtiring.</p><a href="#catalog" class="inline-flex mt-4 bg-[#10131A] text-white rounded-full px-5 py-2.5 font-bold text-xs">Mahsulotlarni ko‘rish</a></div>`;return;}
     box.innerHTML=orders.map(o=>{
       const unpaid=String(o.holat).toLowerCase().includes("to‘lov qilinmagan")||String(o.holat).toLowerCase().includes("to'lov qilinmagan");
-      const items=String(o.mahsulotlar||"").split("\\n").filter(Boolean);
+      const items=String(o.mahsulotlar||"").split(/\r?\n/).filter(Boolean);
       return `<article class="border border-[#DDE1E7] rounded-2xl p-4 sm:p-5 bg-white shadow-sm">
         <div class="flex flex-wrap justify-between items-start gap-3"><div><div class="text-xs text-neutral-500">${esc(o.vaqt||"")}</div><div class="font-extrabold mt-1">${esc(o.orderId)}</div></div><span class="h-fit rounded-full px-3 py-1 text-xs font-bold ${statusClass(o.holat)}">${esc(o.holat)}</span></div>
-        <div class="mt-4"><div class="text-xs uppercase tracking-wider text-neutral-500 font-bold mb-2">Mahsulotlarim</div><div class="space-y-2">${items.map(item=>`<div class="bg-[#F5F6F8] rounded-xl px-3 py-2.5 text-sm text-neutral-700 whitespace-pre-line">${esc(item.replace(/^•\\s*/,""))}</div>`).join("")}</div></div>
+        <div class="mt-4"><div class="text-xs uppercase tracking-wider text-neutral-500 font-bold mb-2">Mahsulotlarim</div><div class="space-y-2">${items.map(item=>`<div class="bg-[#F5F6F8] rounded-xl px-3 py-2.5 text-sm text-neutral-700 whitespace-pre-line">${esc(item.replace(/^•\s*/,""))}</div>`).join("")}</div></div>
         <div class="flex items-center justify-between mt-4 pt-3 border-t border-[#E8EAEE]"><span class="text-sm text-neutral-500">Jami to‘lov</span><span class="font-extrabold">${money(o.jami)}</span></div>
         ${unpaid?`<div class="mt-4 bg-red-50 rounded-xl p-3"><p class="text-sm font-bold text-red-800">To‘lov aniqlanmadi. Qayta to‘lov qilasizmi?</p><div class="flex flex-wrap gap-2 mt-3"><a href="${esc(CONFIG.CLICK_LINK)}" target="_blank" rel="noopener" class="bg-blue-600 text-white rounded-full px-4 py-2 text-xs font-bold">Click orqali to‘lash</a><button type="button" onclick="copyCard()" class="bg-[#10131A] text-white rounded-full px-4 py-2 text-xs font-bold">Karta raqamini nusxalash</button></div><p class="text-xs text-red-700 mt-2">3 kun ichida to‘lov tasdiqlanmasa, buyurtma avtomatik o‘chiriladi.</p></div>`:""}
       </article>`;
@@ -465,7 +542,7 @@
     try{await fetchOrders();toast("Buyurtmalar yangilandi");}
     catch(err){toast(err.message||"Yangilab bo‘lmadi","err");}
   };
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeProductModal();if(!$("cartModal").classList.contains("hidden"))toggleCart(false);}});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeProductModal();closeAuth();if(!$("cartModal").classList.contains("hidden"))toggleCart(false);}});
   $("orderForm").addEventListener("submit",async e=>{
     e.preventDefault();if(!cart.length)return toast("Avval savatchaga mahsulot qo‘shing","err");
     const btn=$("submitBtn");btn.disabled=true;btn.textContent="Buyurtma yuborilmoqda...";
@@ -484,11 +561,9 @@
         goToOrders();
       }else toast("Xatolik: "+(result.message||"Qayta urinib ko‘ring"),"err");
     }catch(err){toast("Yuborib bo‘lmadi. Internetni tekshirib, qayta urinib ko‘ring.","err");}
-    finally{btn.disabled=false;btn.textContent="Buyurtmani tasdiqlash";}
+    finally{btn.disabled=false;btn.textContent="Zakazni tasdiqlash";}
   });
   loadProducts();
 </script>
-
 </body>
 </html>
- 
