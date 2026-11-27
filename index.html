@@ -871,7 +871,7 @@
       const matn=String(m.matn||"");
       const kim=String(m.kim||"user");
       if(!ts||!matn.trim())return;
-      const idx=msgs.findIndex(x=>x.ts===ts||(x.kim===kim&&x.matn===matn&&Math.abs(x.ts-ts)<2000));
+      const idx=msgs.findIndex(x=>x.ts===ts||(x.kim===kim&&x.matn===matn&&Math.abs(x.ts-ts)<1500));
       if(idx<0){msgs.push({ts,kim,matn});changed=true;}
       else if(msgs[idx].matn!==matn||msgs[idx].ts!==ts){msgs[idx]={ts,kim,matn};changed=true;}
     });
@@ -887,7 +887,7 @@
     polling=true;
     try{
       const token=await U().getIdToken();
-      const since=forceAll?0:Math.max(0,maxTs-60000);
+      const since=forceAll?0:Math.max(0,maxTs-120000);
       const res=await fetch(`${CONFIG.SCRIPT_URL}?action=chat&token=${encodeURIComponent(token)}&since=${since}&_=${Date.now()}`);
       const d=await res.json();
       if(d.status!=="ok")return;
@@ -908,7 +908,7 @@
 
   function schedule(){
     clearTimeout(timer); if(!U())return;
-    timer=setTimeout(async()=>{try{await poll(false);}catch(_){} schedule();},isOpen?3000:15000);
+    timer=setTimeout(async()=>{try{await poll(false);}catch(_){} schedule();},isOpen?2500:15000);
   }
 
   window.openChat=function(){
@@ -923,7 +923,7 @@
   window.closeChat=function(){
     isOpen=false;const p=$("chatPanel");p.classList.add("hidden");p.classList.remove("flex");
     document.body.style.overflow="";schedule();
-    requestAnimationFrame(resumeSliders);
+    if(typeof resumeSliders==="function")requestAnimationFrame(resumeSliders);
   };
   window.dismissNotif=function(e){e.stopPropagation();hideNotif();};
 
@@ -950,7 +950,7 @@
       merge([{ts:msgTs,kim:"user",matn:text}]);
       if(maxTs>0)setSeen(maxTs);
       render();
-      setTimeout(()=>{poll(false).catch(()=>{});},800);
+      setTimeout(()=>{poll(false).catch(()=>{});},700);
     }catch(err){
       toast(err.message||"Xabar yuborilmadi","err");
     }finally{
@@ -972,5 +972,7 @@
 </script>
 <!-- =============== /BLOK 9: CHAT ================ -->
 
+
+  
 </body>
 </html>
