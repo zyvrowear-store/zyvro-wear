@@ -522,16 +522,51 @@
     grid.innerHTML = list.map(p => {
       const imgs=getImgs(p), sizes=getSizes(p), old=Number(p.eski_narx)>Number(p.narxi)?Number(p.eski_narx):0;
       const off=old?Math.round((1-Number(p.narxi)/old)*100):0;
-      return `<button data-id="${esc(p.id)}" class="card group text-left bg-white rounded-2xl border border-[#DDE1E7] overflow-hidden flex flex-col hover:border-black transition">
-        <div class="relative aspect-[4/5] bg-[#F2F3F5] overflow-hidden"><img src="${esc(coverOf(p))}" alt="${esc(p.nomi)}" loading="lazy" onerror="imgErr(this)" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+      const ci=cardImgs(p);
+      return `<div role="button" tabindex="0" data-id="${esc(p.id)}" class="card group text-left bg-white rounded-2xl border border-[#DDE1E7] overflow-hidden flex flex-col hover:border-black transition cursor-pointer">
+        <div class="relative aspect-[4/5] bg-[#F2F3F5] overflow-hidden">
+          <div class="slider flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar">${ci.map((u,i)=>`<img src="${esc(u)}" alt="${esc(p.nomi)}" ${i?'loading="lazy"':""} draggable="false" onerror="imgErr(this)" class="w-full h-full object-cover shrink-0 snap-center" style="min-width:100%">`).join("")}</div>
+          ${ci.length>1?`<button type="button" data-dir="-1" aria-label="Oldingi rasm" class="sl-arrow hidden md:flex absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow items-center justify-center text-lg opacity-0 group-hover:opacity-100 transition">‹</button><button type="button" data-dir="1" aria-label="Keyingi rasm" class="sl-arrow hidden md:flex absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 shadow items-center justify-center text-lg opacity-0 group-hover:opacity-100 transition">›</button><div class="absolute bottom-2.5 left-0 right-0 flex justify-center gap-1 pointer-events-none">${ci.map((_,i)=>`<span class="dot h-1.5 rounded-full bg-white shadow transition-all ${i?"w-1.5 opacity-60":"w-4"}"></span>`).join("")}</div>`:""}
         <span class="absolute top-2.5 left-2.5 bg-white text-xs font-semibold px-2.5 py-1 rounded-full">${esc(p.yetkazish_vaqti || "15–20 kun")}</span>
         ${off?`<span class="absolute top-2.5 right-2.5 bg-[#D9202E] text-white text-xs font-bold px-2 py-1 rounded-full">−${off}%</span>`:""}</div>
         <div class="p-3.5 sm:p-4 flex-1 flex flex-col gap-2"><div><div class="text-xs text-neutral-500">${esc(p.kategoriya || p.category || "ZYVRO.WEAR")}</div><h3 class="font-bold text-sm sm:text-base line-clamp-1">${esc(p.nomi)}</h3>${Number(p.baho_soni)>0?`<div class="flex items-center gap-1 text-xs mt-0.5"><span class="text-amber-400">★</span><span class="font-bold">${Number(p.reyting).toFixed(1)}</span><span class="text-neutral-400">(${p.baho_soni})</span></div>`:""}</div>
         <div class="flex flex-wrap gap-1">${sizes.slice(0,4).map(z=>`<span class="text-[11px] font-semibold bg-[#F2F3F5] text-neutral-600 px-2 py-0.5 rounded-md">${esc(z)}</span>`).join("")}</div>
-        <div class="mt-auto pt-1 flex items-baseline gap-2"><span class="font-extrabold">${money(p.narxi)}</span>${old?`<s class="text-xs text-neutral-400">${money(old)}</s>`:""}</div></div></button>`;
+        <div class="mt-auto pt-1 flex items-baseline gap-2"><span class="font-extrabold">${money(p.narxi)}</span>${old?`<s class="text-xs text-neutral-400">${money(old)}</s>`:""}</div></div></div>`;
     }).join("");
-    document.querySelectorAll(".card").forEach(c => c.onclick=()=>openProductModal(c.dataset.id));
+    grid.onclick = e => {
+      const a = e.target.closest(".sl-arrow");
+      if (a) { e.stopPropagation(); const sl = a.parentElement.querySelector(".slider"); sl.dataset.stop = "1"; slideTo(sl, +a.dataset.dir); return; }
+      const c = e.target.closest(".card"); if (c) openProductModal(c.dataset.id);
+    };
+    grid.onkeydown = e => { const c = e.target.closest(".card"); if (c && e.target === c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openProductModal(c.dataset.id); } };
+    initSliders();
   }
+
+  // Kartochka rasmlari: `rasm` ustunidagi hamma rasm (u bo‘sh bo‘lsa — birinchi rangning rasmlari)
+  const cardImgs = p => (p.rasmlar || p.rasm) ? getImgs(p) : imagesForColor(p, getColors(p)[0] || "");
+  function slideTo(sl, dir) {
+    const n = sl.children.length, i = (Math.round(sl.scrollLeft / sl.clientWidth) + dir + n) % n;
+    sl.scrollTo({ left: i * sl.clientWidth, behavior: "smooth" });
+  }
+  function initSliders() {
+    document.querySelectorAll(".slider").forEach(sl => {
+      const dots = sl.parentElement.querySelectorAll(".dot"); if (!dots.length) return;
+      sl.addEventListener("scroll", () => {
+        const i = Math.round(sl.scrollLeft / sl.clientWidth);
+        dots.forEach((d, k) => { d.classList.toggle("w-4", k === i); d.classList.toggle("w-1.5", k !== i); d.classList.toggle("opacity-60", k !== i); });
+      }, { passive: true });
+      ["touchstart", "pointerdown", "wheel"].forEach(ev => sl.addEventListener(ev, () => { sl.dataset.stop = "1"; }, { passive: true }));
+    });
+  }
+  const SLIDE_INTERVAL = 3000; // avtomatik almashish vaqti (ms). 3000 = 3 sekund
+  setInterval(() => {
+    document.querySelectorAll(".slider").forEach(sl => {
+      if (sl.children.length < 2 || sl.dataset.stop) return;       // odam surgan bo‘lsa to‘xtaydi
+      const r = sl.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;              // ekranda ko‘rinmasa almashmaydi
+      slideTo(sl, 1);
+    });
+  }, SLIDE_INTERVAL);
   function openProductModal(id) {
     const p=products.find(x=>x.id===String(id)); if(!p)return;
     currentProduct=p;
